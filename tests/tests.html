@@ -18,6 +18,16 @@ tests({
     flashcards.openDeck('oranges');
     eq(flashcards.exposeCurrentDeck().name, 'oranges');
   },
+  
+  'it should throw TypeError if no name is given': function() {
+    let error;
+    try {
+      flashcards.openDeck();
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+  },
       
   //flashcards.addCard() - add cards to current deck
   
