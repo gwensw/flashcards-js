@@ -24,7 +24,7 @@
       __name = false,
       __currentIndex = -1;
 
-  /* --- HELPER METHODS (INTERNAL) --- */
+  /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
   
   //save the current deck to localStorage
   function saveDeck () {
@@ -38,8 +38,6 @@
     return n === undefined ? true : typeof n === 'number' && n <= 10 && n >= 0;
   }
   
-  /* --- CONSTRUCTORS --- */
-
   function Deck (name) {
     this.name = name || 'temp';
     this.cards = [];
@@ -55,6 +53,9 @@
 
   //change the current deck
   lib.openDeck = function (name) {
+    if (!name) {
+      throw new TypeError('Must specify a deck name to open');
+    }
     if (localStorage.getItem(`deck-${name}`) === null) {
       localStorage.setItem(`deck-${name}`, JSON.stringify(new Deck(name)));
     }
@@ -80,7 +81,7 @@
     saveDeck();
   };
   
-  //takes any number of arrays ([side1, side2, difficulty) and creates one card per array
+  //takes any number of arrays ([side1, side2, difficulty]) and creates one card per array on the current deck
   lib.addCards = function () {
     for (let i = 0; i < arguments.length; i++) {
       if (Array.isArray(arguments[i]) && arguments[i].length >= 2) {
@@ -93,7 +94,7 @@
     saveDeck();
   };
   
-  //changes an attribute of a card
+  //edit any attribute of a card
   lib.editCard = function (index, attribute, newVal) {
     if (__currentDeck.cards[index] === undefined) {
       throw new TypeError('No card at that index');
