@@ -1,0 +1,375 @@
+<script src="../flashcards.js"></script>
+<script src="tinytest.js"></script>
+
+<script>
+  
+localStorage.clear(); //make sure there aren't leftover decks from last time tests ran
+
+tests({
+  
+  //flashcards.openDeck() - open/create deck
+  
+  'if no deck with specified name exists, it should create an empty deck object and set it to current deck': function() {
+    flashcards.openDeck('apples');
+    eq(flashcards.exposeCurrentDeck(), Object(flashcards.exposeCurrentDeck()));
+  },
+  
+  'it should set current deck to the named deck from localStorage': function() {
+    flashcards.openDeck('oranges');
+    eq(flashcards.exposeCurrentDeck().name, 'oranges');
+  },
+      
+  //flashcards.addCard() - add cards to current deck
+  
+  'it should create a new card object on the current deck, containing two sides': function() {
+    localStorage.clear();
+    flashcards.openDeck('animals');
+    flashcards.addCard('lion', 'llew');
+    eq(flashcards.exposeCurrentDeck().cards.length, 1);
+    eq(flashcards.exposeCurrentDeck().cards[0], Object(flashcards.exposeCurrentDeck().cards[0]));
+    eq(flashcards.exposeCurrentDeck().cards[0].side1[0], 'lion'); 
+    eq(flashcards.exposeCurrentDeck().cards[0].side2[0], 'llew'); 
+  },
+  
+  'it should save cards which were created earlier': function() {
+    flashcards.openDeck('oranges');
+    flashcards.openDeck('animals');
+    flashcards.addCard('horse', 'ceffyl');
+    eq(flashcards.exposeCurrentDeck().cards.length, 2);
+    eq(flashcards.exposeCurrentDeck().cards[0].side1, 'lion');
+    eq(flashcards.exposeCurrentDeck().cards[0].side2, 'llew');
+  },
+
+  'it should throw typeError if incomplete parameters are given (card must have at least 2 sides)': function() {
+    localStorage.clear();
+    let error;
+    flashcards.openDeck('animals');
+    try {
+      flashcards.addCard('elephant');
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+    assertEquals(flashcards.exposeCurrentDeck().cards.length, 0);
+  },
+  
+  'it should be possible to give a difficulty rating when creating a card': function() {
+    localStorage.clear();
+    flashcards.openDeck('animals');
+    flashcards.addCard('elephant', 'eliffant', 1);
+    flashcards.addCard('calf', 'llo', 10);
+    flashcards.addCard('dog', 'ci', 0);
+    assertEquals(flashcards.exposeCurrentDeck().cards[0].difficulty, 1);
+    assertEquals(flashcards.exposeCurrentDeck().cards[1].difficulty, 10);
+    assertEquals(flashcards.exposeCurrentDeck().cards[2].difficulty, 0);
+  },
+
+  'cards should have a default difficulty rating of 5': function() {
+    flashcards.openDeck('animals');
+    flashcards.addCard('seal', 'morlo');
+    assertEquals(flashcards.exposeCurrentDeck().cards[3].difficulty, 5);
+  },
+  
+  'it should throw typeError if a difficulty rating above 10 is given': function() {
+    let error;
+    flashcards.openDeck('animals');
+    try {
+      flashcards.addCard('fox', 'cadno', 12);
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+  },
+  
+  'it should throw typeError if a difficulty rating below 0 is given': function() {
+    let error;
+    flashcards.openDeck('animals');
+    try {
+      flashcards.addCard('fox', 'cadno', -3);
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+  },
+  
+  'it should throw typeError if difficulty is not a number': function() {
+    let error;
+    flashcards.openDeck('animals');
+    try {
+      flashcards.addCard('fox', 'cadno', 'a');
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+  },
+  
+  'it should accept multiple question/answers on each side': function() {
+    flashcards.openDeck('multichoice');
+    flashcards.addCard('fox', ['cadno', 'llwynog'], 7);
+    eq(flashcards.exposeCurrentDeck().cards.length, 1);
+    assert(Array.isArray(flashcards.exposeCurrentDeck().cards[0].side2));
+    eq(flashcards.exposeCurrentDeck().cards[0].side2[0], 'cadno');
+    eq(flashcards.exposeCurrentDeck().cards[0].side2[1], 'llwynog');
+  },
+  
+  //flashcards.addCards() - add multiple cards to current deck
+  
+  'it should create and add multiple cards to the current deck': function() {
+    flashcards.openDeck('multi');
+    flashcards.addCards(['2 x 2', '4', 2], ['What is the capital of the UK?', 'London'], ['2 - 1', '1', 0]);
+    eq(flashcards.exposeCurrentDeck().cards.length, 3);
+  },
+  
+  'it should throw typeError and not add any if any argument is not an array': function() {
+    let error;
+    flashcards.openDeck('multi2');
+    try {
+      flashcards.addCards(['leopard', 'llewpart'], 'snake');
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+    eq(flashcards.exposeCurrentDeck().cards.length, 0);
+  },
+  
+  'it should throw typeError and not add any cards if any argument does not include info for two sides': function() {
+    let error;
+    flashcards.openDeck('multi3');
+    flashcards.addCard('cat', 'cath');
+    try {
+      flashcards.addCards(['dolphin', 'dolffin'], ['snake']);
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+    eq(flashcards.exposeCurrentDeck().cards.length, 1);
+  },
+  
+  //flashcards.editCard()
+  
+  'it should be possible to change the values on either side of a card': function () {
+    flashcards.openDeck('editable');
+    flashcards.addCard('companion', 'ffrind');
+    flashcards.editCard(0, 'side1', 'friend');
+    flashcards.editCard(0, 'side2', ['cyfaill', 'ffrind']);
+    eq(flashcards.exposeCurrentDeck().cards[0].side1.length, 1);
+    eq(flashcards.exposeCurrentDeck().cards[0].side1[0], 'friend');
+    eq(flashcards.exposeCurrentDeck().cards[0].side2.length, 2);
+    eq(flashcards.exposeCurrentDeck().cards[0].side2[0], 'cyfaill');
+    eq(flashcards.exposeCurrentDeck().cards[0].side2[1], 'ffrind');
+  },
+  
+  'it should be possible to change the difficulty of a card': function () {
+    flashcards.openDeck('editable');
+    flashcards.editCard(0, 'difficulty', 8);
+    eq(flashcards.exposeCurrentDeck().cards[0].difficulty, 8);
+  },
+  
+  'it should reject any edited difficulty which is not a number from 0 to 1': function () {
+    let error;
+    flashcards.openDeck('editable');
+    try {
+      flashcards.editCard(0, 'difficulty', null);
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+  },
+  
+  //flashcards.addToCard()
+  
+  'it should be possible to add new acceptable answers to either side of a card': function () {
+    flashcards.openDeck('addable');
+    flashcards.addCards(['road', 'ffordd', 7], ['thank you', ['diolch yn fawr', 'diolch'], 2]);
+    flashcards.addToCard(0, 'side1', 'way');
+    flashcards.addToCard(1, 'side2', 'diolch yn fawr iawn');
+    eq(flashcards.exposeCurrentDeck().cards[0].side1.length, 2);
+    eq(flashcards.exposeCurrentDeck().cards[0].side1[1], 'way');
+    eq(flashcards.exposeCurrentDeck().cards[1].side2.length, 3);
+    eq(flashcards.exposeCurrentDeck().cards[1].side2[2], 'diolch yn fawr iawn');
+  },
+  
+  //flashcards.deleteCard()
+  
+  'it should be possible to delete a specific card from the current deck by giving its position in the deck': function () {
+    flashcards.openDeck('animals');
+    let deckLen = flashcards.exposeCurrentDeck().cards.length;
+    let card1side1 = flashcards.exposeCurrentDeck().cards[1].side1;
+    flashcards.deleteCard(0);
+    eq(flashcards.exposeCurrentDeck().cards.length, deckLen - 1);
+    eq(flashcards.exposeCurrentDeck().cards[0].side1, card1side1);
+  },
+  
+  //flashcards.deleteCurrentDeck()
+  
+  'it should permanently delete the current deck from local storage': function () {
+    flashcards.openDeck('animals');
+    flashcards.deleteCurrentDeck();
+    eq(localStorage.getItem('deck-animals'), undefined);
+    flashcards.openDeck('animals');
+    eq(flashcards.exposeCurrentDeck().cards.length, 0);
+  },
+  
+  //flashcards.drawNext()
+  
+  'it should first return info from the 0th card in the deck, as an object containing the question and the difficulty score': function () {
+    flashcards.openDeck('animals');
+    flashcards.addCards(['sheep', 'dafad', 7], ['cat', 'cath'], ['horse', ['ceffyl', 'march'], 7]);
+    let x = flashcards.drawNext();
+    eq(x.question[0], 'sheep');
+    eq(x.difficulty, 7);
+  },
+
+  'it should next return the 1st card in the cards array': function () {
+    let x = flashcards.drawNext();
+    eq(x.question[0], 'cat');
+    eq(x.difficulty, 5);
+  },
+  
+  'it should reset and return the 0th card in the cards array if the deck is re-opened': function () {
+    flashcards.openDeck('animals');
+    let x = flashcards.drawNext();
+    eq(x.question[0], 'sheep');
+  },
+  
+  'after the final card in the array is drawn, it should cycle back to the start and return the 0th card': function () {
+    let x;
+    flashcards.openDeck('animals');
+    for (let i = 0; i <= 3; i ++) {
+      x = flashcards.drawNext();
+    }
+    eq(x.question[0], 'sheep');
+  },
+  
+  'if min & max arguments are given, it should return the first card whose difficulty falls between them': function () {
+    flashcards.openDeck('minmax');
+    flashcards.addCards(['blue + yellow', 'green', 2], ['red + yellow', 'orange', 8]);
+    let x = flashcards.drawNext(3, 9);
+    eq(x.question[0], 'red + yellow');
+  },
+  
+  'if no max difficulty is given, it should return the next card with difficulty from min to 10': function () {
+    flashcards.openDeck('minmax');
+    flashcards.addCard('white + black', 'grey', 9);
+    let x = flashcards.drawNext(9);
+    eq(x.question[0], 'white + black');
+  },
+  
+  'if deck has no cards in the selected difficulty range, it should return false': function () {
+    flashcards.openDeck('minmax');
+    let x = flashcards.drawNext(4, 7);
+    eq(x, false);
+  },
+  
+  'if deck has no cards, it should return false': function () {
+    flashcards.openDeck('minmax');
+    flashcards.deleteCurrentDeck();
+    flashcards.openDeck('minmax');
+    let x = flashcards.drawNext();
+    eq(x, false);
+  },
+  
+  // flashcards.flipDeck()
+  'for all cards in the current deck, it should swap which side is shown as the question, and which holds the answer': function () {
+    let x, y;
+    flashcards.flipDeck();
+    flashcards.openDeck('animals');
+    x = flashcards.drawNext();
+    eq(x.question[0], 'dafad');
+    flashcards.flipDeck();
+    y = flashcards.drawNext();
+    eq(y.question[0], 'cat');
+  },
+  
+  //flashcards.checkAnswer()
+  
+  'it should return outcome:true if the argument is included in the card array of possible answers': function () {
+    flashcards.openDeck('animals');
+    flashcards.drawNext();
+    assert(flashcards.checkAnswer('dafad').outcome);
+  },
+  
+  'it should return outcome:false if the argument is not included in the card array of possible answers': function () {
+    flashcards.openDeck('animals');
+    flashcards.drawNext();
+    eq(flashcards.checkAnswer('cath').outcome, false);
+  },
+    
+  'it should decrease the card difficulty and return new difficulty if the answer is correct': function () {
+    flashcards.openDeck('testdeck');
+    flashcards.addCard('What is 2+2?', '4', 2);
+    flashcards.drawNext();
+    let res = flashcards.checkAnswer('4'),
+        diffSetting = flashcards.settings.adjustDifficultyDown;
+    eq(res.outcome, true);
+    eq(res.newDifficulty, 2 + diffSetting);
+  },
+  
+  'it should increase the card difficulty and return new difficulty if the answer is false': function () {
+    localStorage.clear();
+    flashcards.openDeck('testdeck');
+    flashcards.addCard('What is 2+2?', ['4', 'four'], 2);
+    flashcards.drawNext();
+    let res = flashcards.checkAnswer('5'),
+        diffSetting = flashcards.settings.adjustDifficultyUp;
+    eq(res.outcome, false);
+    eq(res.newDifficulty, 2 + diffSetting);
+  },
+  
+  'it should never allow difficulty to go below 0': function () {
+    localStorage.clear();
+    flashcards.openDeck('testdeck');
+    flashcards.addCard('5 - 1', '4', 0);
+    flashcards.drawNext();
+    let res = flashcards.checkAnswer('4');
+    eq(res.newDifficulty, 0);
+  },
+  
+  'it should never allow difficulty to go above 10': function () {
+    localStorage.clear();
+    flashcards.openDeck('testdeck');
+    flashcards.addCard('3 x 3', '9', 10);
+    flashcards.drawNext();
+    let res = flashcards.checkAnswer('100');
+    eq(res.newDifficulty, 10);
+  },
+  
+  'it should return an array of all possible correct answers': function () {
+    localStorage.clear();
+    flashcards.openDeck('testdeck');
+    flashcards.addCard('What is 2+2?', ['4', 'four'], 2);
+    flashcards.drawNext();
+    let outcome = flashcards.checkAnswer('5');
+    assert(Array.isArray(outcome.answers));
+    eq(outcome.answers.length, 2);
+    eq(outcome.answers[0], '4');
+    eq(outcome.answers[1], 'four');
+  },
+  
+  //flashcards.shuffle()
+  
+  'it should shuffle the current deck without removing/adding any cards': function () {
+    flashcards.openDeck('shuffledeck');
+    flashcards.addCards(['first card', 'cerdyn cyntaf'], ['second card', 'ail gerdyn'], ['third card', 'trydydd cerdyn']);
+    flashcards.shuffle();
+    console.log(flashcards.exposeCurrentDeck().cards);
+    eq(flashcards.exposeCurrentDeck().cards.length, 3);
+  },
+  
+  'shuffling should reset the current index': function () {
+    let firstcard;
+    flashcards.openDeck('shuffledeck');
+    flashcards.drawNext();
+    flashcards.shuffle();
+    firstcard = flashcards.exposeCurrentDeck().cards[0].side1;
+    nextquestion = flashcards.drawNext().question;
+    eq(nextquestion, firstcard);
+  }
+  
+  //it should be possible to download / view the full JSON for a deck
+  //it should be possible to load in the JSON for a deck to re-create that deck
+  //it should check whether the JSON creates valid cards
+	
+});
+  
+</script>
