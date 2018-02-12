@@ -115,7 +115,7 @@
         __currentDeck.cards[index].difficulty = newVal;
         break;
       default:
-        throw new TypeError('The second argument must be difficulty or a valud side');
+        throw new TypeError('The second argument must be difficulty or a valid side');
     }
     saveDeck();
   };
@@ -138,9 +138,11 @@
   };
   
   //delete a deck from localstorage and set __currentDeck to false
-  lib.deleteCurrentDeck = function () {
-    localStorage.removeItem(`deck-${__name}`);
-    __currentDeck = false;
+  lib.deleteDeck = function (name) {
+    localStorage.removeItem(`deck-${name}`);
+    if (name === __name) {
+      __currentDeck = false;
+    }
   };
   
   //draw the next card in the deck (if it falls within specified difficulty parameters)
@@ -150,11 +152,11 @@
         card,
         i,
         len = __currentDeck.cards.length;
-    if (len === 0) {
+    if (len === 0 || __currentIndex >= len - 1) {
       return false;
     }
     for (i = 0; i < len; i++) {
-      __currentIndex = (__currentIndex + 1 === len) ? 0 : __currentIndex + 1;
+      __currentIndex += 1;
       card = __currentDeck.cards[__currentIndex];
       if (card.difficulty >= min && card.difficulty <= max) {
         return {
@@ -217,8 +219,8 @@
     settings.answerSide = x;
   };
   
-  //for testing only!!
-  lib.exposeCurrentDeck = function() {
+  //for testing
+  lib.exposeDeck = function() {
     return __currentDeck;
   };
 
