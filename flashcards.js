@@ -218,6 +218,11 @@
     settings.answerSide = x;
   };
   
+  //return number of cards in open deck
+  lib.deckLength = function () {
+    return __currentDeck.cards.length;
+  };
+  
   //for testing
   lib.exposeDeck = function() {
     return __currentDeck;

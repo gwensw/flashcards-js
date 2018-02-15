@@ -373,6 +373,14 @@ tests({
     firstcard = flashcards.exposeDeck().cards[0].side1;
     nextquestion = flashcards.drawNext().question;
     eq(nextquestion, firstcard);
+  },
+  
+  //flashcards.getDeckLength()
+  
+  'it should return the number of cards in the currently-open deck as an integer': function () {
+    flashcards.openDeck('shortdeck');
+    flashcards.addCards(['a', 'A'], ['b', 'B'], ['c', 'C'], ['d', 'D']);
+    eq(flashcards.deckLength(), 4);
   }
   
   //it should be possible to download / view the full JSON for a deck
