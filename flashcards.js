@@ -176,7 +176,7 @@
         bool = false,
         card = __currentDeck.cards[__currentIndex],
         answers = card[settings.answerSide],
-        newDiff;
+        newDiff = card.difficulty;
     for (let i = 0; i < answers.length; i++) {
       answer = settings.caseSensitive ? answers[i] : answers[i].toLowerCase();
       if (attempt === answer) {
@@ -185,7 +185,6 @@
       }
     }
     //calculate new card difficulty
-    newDiff = card.difficulty;
     newDiff += bool ? settings.adjustDifficultyDown : settings.adjustDifficultyUp;
     //make sure new card difficulty is within range, else stay the same
     card.difficulty = isValidDifficulty(newDiff) ? newDiff : card.difficulty;
