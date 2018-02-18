@@ -401,19 +401,33 @@ tests({
   
   //flashcards.getSessionInfo()
   'it should return an object containing no. of cards correct since deck opened': function () {
-    fail();
+    flashcards.openDeck('sessiondeck');
+    flashcards.addCards(['a', 'A'], ['b', 'B', 8], ['c', 'C'], ['d', 'D']);
+    flashcards.drawNext();
+    flashcards.checkAnswer('N'); //wrong answer
+    flashcards.drawNext();
+    flashcards.checkAnswer('B'); //right answer
+    let sessionInfo = flashcards.getSessionInfo();
+    eq(sessionInfo.correct, 1);
   },
   
   'it should contain no. of cards incorrect since deck opened': function () {
-    fail();
+    let sessionInfo = flashcards.getSessionInfo();
+    eq(sessionInfo.incorrect, 1);
   },
   
   'it should contain an array of card indexes which were incorrectly answered': function () {
-    fail();
+    let sessionInfo = flashcards.getSessionInfo();
+    eq(Array.isArray(sessionInfo.incorrectCards), true);
+    eq(sessionInfo.incorrectCards.length, 1);
+    eq(sessionInfo.incorrectCards[0], 0);
   },
   
   'it should contain an array of card indexes which were correctly answered': function () {
-    fail();
+    let sessionInfo = flashcards.getSessionInfo();
+    eq(Array.isArray(sessionInfo.correctCards), true);
+    eq(sessionInfo.correctCards.length, 1);
+    eq(sessionInfo.correctCards[0], 1);
   },
   
   //it should be possible to download / view the full JSON for a deck

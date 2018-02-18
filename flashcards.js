@@ -23,6 +23,13 @@
   let __currentDeck = false,
       __name = false,
       __currentIndex = -1;
+  
+  const __sessionInfo = {
+    correct: 0,
+    incorrect: 0,
+    cardsCorrect: [],
+    cardsIncorrect: []
+  };
 
   /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
   
@@ -36,6 +43,10 @@
   //resets current session info and sets currentIndex to -1
   function reset () {
     __currentIndex = -1;
+    __sessionInfo.correct = 0;
+    __sessionInfo.incorrect = 0;
+    __sessionInfo.correctCards = [];
+    __sessionInfo.incorrectCards = [];
   }
   
   //return true if difficulty setting is a valid number / undefined
@@ -182,25 +193,34 @@
   
   //check if attempt is correct & change card difficulty up/down
   lib.checkAnswer = function(attempt) {
-    attempt = settings.caseSensitive ? attempt : attempt.toLowerCase();
     let i,
         answer,
         bool = false,
         card = __currentDeck.cards[__currentIndex],
         answers = card[settings.answerSide],
         newDiff = card.difficulty;
+    
+    attempt = settings.caseSensitive ? attempt : attempt.toLowerCase();
+    
+    //check if attempt is correct
     for (let i = 0; i < answers.length; i++) {
       answer = settings.caseSensitive ? answers[i] : answers[i].toLowerCase();
       if (attempt === answer) {
+        __sessionInfo.correct += 1;
+        __sessionInfo.correctCards.push(__currentIndex);
         bool = true;
         break;
+      } else {
+        __sessionInfo.incorrect += 1;
+        __sessionInfo.incorrectCards.push(__currentIndex);
       }
     }
-    //calculate new card difficulty
+    
+    //calculate card's new difficulty
     newDiff += bool ? settings.adjustDifficultyDown : settings.adjustDifficultyUp;
-    //make sure new card difficulty is within range, else stay the same
     card.difficulty = isValidDifficulty(newDiff) ? newDiff : card.difficulty;
-    //save deck to localstorage
+    
+    //save deck to localstorage and return outcome
     saveDeck();
     return {
       outcome: bool,
@@ -237,12 +257,7 @@
   
   //return info about current session
   lib.getSessionInfo = function () {
-    return {
-      correct: 0,
-      incorrect: 0,
-      cardsCorrect: [],
-      cardsIncorrect: []
-    };
+    return __sessionInfo;
   };
   
   //for testing
