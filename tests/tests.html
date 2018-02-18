@@ -381,12 +381,47 @@ tests({
     flashcards.openDeck('shortdeck');
     flashcards.addCards(['a', 'A'], ['b', 'B'], ['c', 'C'], ['d', 'D']);
     eq(flashcards.deckLength(), 4);
-  }
+  },
+  
+  //flashcards.draw(index)
+  
+  'it should return an object containing question and difficulty of card at index': function () {
+    flashcards.openDeck('selectdeck');
+    flashcards.addCards(['a', 'A'], ['b', 'B', 8], ['c', 'C'], ['d', 'D']);
+    let card = flashcards.draw(1);
+    eq(card.question, 'b');
+    eq(card.difficulty, 8);
+  },
+  
+  'if there is no card at the index, it should return false': function () {
+    flashcards.openDeck('selectdeck');
+    let card = flashcards.draw(4);
+    eq(card, false);
+  },
+  
+  //flashcards.getSessionInfo()
+  'it should return an object containing no. of cards correct since deck opened': function () {
+    fail();
+  },
+  
+  'it should contain no. of cards incorrect since deck opened': function () {
+    fail();
+  },
+  
+  'it should contain an array of card indexes which were incorrectly answered': function () {
+    fail();
+  },
+  
+  'it should contain an array of card indexes which were correctly answered': function () {
+    fail();
+  },
   
   //it should be possible to download / view the full JSON for a deck
   //it should be possible to load in the JSON for a deck to re-create that deck
   //it should check whether the JSON creates valid cards
 	
 });
+  
+localStorage.clear(); //make sure there aren't leftover decks
   
 </script>

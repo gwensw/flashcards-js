@@ -33,6 +33,11 @@
     }
   }
   
+  //resets current session info and sets currentIndex to -1
+  function reset () {
+    __currentIndex = -1;
+  }
+  
   //return true if difficulty setting is a valid number / undefined
   function isValidDifficulty (n) {
     return n === undefined ? true : typeof n === 'number' && n <= 10 && n >= 0;
@@ -60,8 +65,8 @@
       localStorage.setItem(`deck-${name}`, JSON.stringify(new Deck(name)));
     }
     __currentDeck = JSON.parse(localStorage.getItem(`deck-${name}`));
-    __currentIndex = -1;
     __name = name;
+    reset();
   };
   
   //create a new card and add to the current deck
@@ -145,8 +150,15 @@
     }
   };
   
+  //draw the card with the specified index
+  lib.draw = function (index) {
+    return __currentDeck.cards[index] ? 
+          { question: __currentDeck.cards[index][settings.questionSide], difficulty: __currentDeck.cards[index].difficulty }
+          : false;
+  };
+  
   //draw the next card in the deck (if it falls within specified difficulty parameters)
-  lib.drawNext = function(minDiff, maxDiff) {
+  lib.drawNext = function (minDiff, maxDiff) {
     let min = minDiff || 0,
         max = maxDiff || 10,
         card,
@@ -205,8 +217,8 @@
         let j = Math.floor(Math.random() * (i + 1));
         [cards[i], cards[j]] = [cards[j], cards[i]];
     }
-    //reset __currentIndex
-    __currentIndex = -1;
+    //reset __currentIndex and session info
+    reset();
     //save the current deck
     saveDeck();
   };
@@ -223,10 +235,21 @@
     return __currentDeck.cards.length;
   };
   
+  //return info about current session
+  lib.getSessionInfo = function () {
+    return {
+      correct: 0,
+      incorrect: 0,
+      cardsCorrect: [],
+      cardsIncorrect: []
+    };
+  };
+  
   //for testing
   lib.exposeDeck = function() {
     return __currentDeck;
   };
+
 
   /* --- DECLARE MODULE --- */
 
