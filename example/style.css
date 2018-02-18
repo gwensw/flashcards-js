@@ -1,0 +1,29 @@
+.progress {
+  width: 500px;
+  height: 20px;
+  display: flex;
+  flex-direction: row;
+  align-content: stretch;
+  justify-content: flex-start;
+}
+
+.progress__step {
+  flex-grow: 1;
+  border: 1px solid grey;
+}
+
+.progress__step--correct {
+  background-color: green;
+}
+
+.progress__step--incorrect {
+  background-color: red;
+}
+
+.progress__step--incomplete {
+  background-color: white;
+}
+
+.js-hidden {
+  display: none;
+}
