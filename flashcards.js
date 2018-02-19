@@ -27,8 +27,8 @@
   const __sessionInfo = {
     correct: 0,
     incorrect: 0,
-    cardsCorrect: [],
-    cardsIncorrect: []
+    correctCards: [],
+    incorrectCards: []
   };
 
   /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
@@ -163,6 +163,7 @@
   
   //draw the card with the specified index
   lib.draw = function (index) {
+    __currentIndex = index;
     return __currentDeck.cards[index] ? 
           { question: __currentDeck.cards[index][settings.questionSide], difficulty: __currentDeck.cards[index].difficulty }
           : false;
@@ -210,10 +211,12 @@
         __sessionInfo.correctCards.push(__currentIndex);
         bool = true;
         break;
-      } else {
-        __sessionInfo.incorrect += 1;
-        __sessionInfo.incorrectCards.push(__currentIndex);
       }
+    }
+    
+    if (!bool) {
+      __sessionInfo.incorrect += 1;
+      __sessionInfo.incorrectCards.push(__currentIndex);
     }
     
     //calculate card's new difficulty
