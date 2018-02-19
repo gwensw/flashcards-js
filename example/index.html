@@ -1,35 +1,64 @@
 <head>
   <title>Flashcards Demo</title>
   <link rel="stylesheet" type="text/css" href="style.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:300,400,500,700" type="text/css">
 </head>
 <body>
   
+  <header class="header"></header>
+  
   <div class="progress"></div>
   
-  <div class="card"></div>
+  <div class="card">
+    <div class="card__stack card__stack--1"></div>
+    <div class="card__stack card__stack--2"></div>
+    <div id="maincard">
+      <div class="card__side card__side--question"></div>
+      <div class="card__side card__side--answer"></div>
+    </div>
+  </div>
+  
+  <div class="score js-hidden"></div>
 
-  <div>
+  <div class="answer">
     <input type="text" class="answer__input">
-    <button id="checkAnswer" class="answer__submit" type="button">Go</button>
-    <button id="nextCard" class="answer__next js-hidden" type="button">Next</button>
+    <button id="checkAnswer" class="button answer__submit" type="button">Go ></button>
+    <button id="nextCard" class="button answer__next js-hidden" type="button">Next</button>
   </div>
 
-  <button id="shuffle" class="button button--shuffle">Shuffle</button>
+  <button id="retry" class="button button--retry js-hidden">Retry Wrong Answers</button>
+  <button id="shuffle" class="button button--shuffle">Shuffle and Start Again</button>
+  
+  
+  
   
   <!--- Handlebars Templates --->
   
   <script id="questionTemplate" type="text/x-handlebars-template">
-    <div class="card__difficulty">Difficulty: {{difficulty}}</div>
+    <div class="card__difficulty card__difficulty--{{difficulty}}">
+      <p>question</p>
+      <p>difficulty: {{difficulty}}</p>
+    </div>
     <p class="card__text">{{question}}</p>
     <div class="card__success card__success--hidden"></div>
   </script>
   
   <script id="answerTemplate" type="text/x-handlebars-template">
-    <div class="card__difficulty">Difficulty: {{difficulty}}</div>
-    {{#each answers}}
-      <p class="card__text">{{this}}</p>
-    {{/each}}
+    <div class="card__difficulty  card__difficulty--{{difficulty}}">
+      <p>answer</p>
+      <p>difficulty: {{difficulty}}</p>
+    </div>
+    <p class="card__text">
+      {{#each answers}}
+        {{this}}<br>
+      {{/each}}
+    </p>
     <div class="card__success {{#if outcome}}card__success--correct{{else}}card__success--incorrect{{/if}}"></div>
+  </script>
+  
+  <script id="scoreTemplate" type="text/x-handlebars-template">
+    <p>All done!</p>
+    <p class="card__text">{{correct}} / {{total}}</p>
   </script>
   
   <script id="progressTemplate" type="text/x-handlebars-template">
@@ -37,6 +66,8 @@
       <div class="progress__step progress__step--{{this}}"></div>
     {{/each}}
   </script>
+  
+  <!--- /Handlebars Templates --->
 
   <script src="../flashcards.js"></script>
   <script src="handlebars.js"></script>
