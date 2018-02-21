@@ -263,6 +263,21 @@
     return __sessionInfo;
   };
   
+  //return array of deck names in localStorage
+  lib.listDecks = function () {
+    const names = [],
+          len = localStorage.length;
+    let i;
+    for (i = 0; i < len; i++) {
+      //match and strip 'deck-' keys
+      let name = localStorage.key(i).match(/deck-(.*)/);
+      if (name) {
+        names.push(name[1]);
+      }
+    }
+    return names;
+  };
+  
   //for testing
   lib.exposeDeck = function() {
     return __currentDeck;
