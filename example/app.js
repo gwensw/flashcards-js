@@ -27,12 +27,6 @@
   
   /* SET UP ROUTING */
   
-  //create a sample deck with some cards (if not already in localstorage)
-  flashcards.openDeck('food');
-  if (!flashcards.deckLength()) {
-    flashcards.addCards(['milk', 'llaeth'], ['bread', 'bara'], ['soup', 'cawl'], ['butter', 'menyn'], ['cheese', 'caws'], ['tasty', 'blasus'], ['healthy', 'iachus'], ['chocolate', 'siocled'], ['carrots', 'moron'], ['beans', 'ffa'], ['toast', 'tost'], ['tomatoes', 'tomatos'], ['salt', 'halen'], ['salty', 'hallt'], ['pepper', ['pubr', 'pubur']], ['coffee', 'coffi']);
-  }
-  //set up routing
   const routes = {
     '/train/:deckname': train,
     '/edit/:deckname': edit,
@@ -86,7 +80,6 @@
   }
   
   function select() {
-    console.log("Looking at", localStorage.length, localStorage.key(0));
     document.querySelector(".main").innerHTML = selectTemplate();
     changeHeader(false, "Flashcards.js");
   }
