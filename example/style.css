@@ -75,13 +75,41 @@ body {
   border-right: 1px solid lightgrey;
 }
 
+.deckmenu {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-top: 30px;
+  padding: 0 20px;
+}
+
 .deck {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
   width: 230px;
   height: 320px;
+  margin: 20px 10px;
+  border-radius: 10px;
+  box-shadow: 1px 1px 10px #DADDDD;
+  border: 2px solid #8DA7BE;
+  background-color: #FDFFFC;
+  text-decoration: none;
+  transition: all 0.5s;
+}
+
+.deck:hover {
+  box-shadow: 2px 2px 20px 3px #DADDDD;
 }
 
 .deck__title {
-  
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  color: #50514F;
+  text-decoration: none;
+  text-align: center;
+  margin: auto 0;
 }
 
 .card {
@@ -265,4 +293,26 @@ body {
 
 .js-hidden {
   display: none;
+}
+
+@media screen and (max-width: 830px) {
+  .deck {
+    width: 161px;
+    height: 224px;
+  }
+}
+
+@media screen and (max-width: 407px) {
+  .deck {
+    width: 207px;
+    height: 288px;
+  }
+  
+  .deckmenu {
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 0;
+  }
 }

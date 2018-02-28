@@ -24,13 +24,13 @@
   </script>
   
   <script id="selectTemplate" type="text/x-handlebars-template">
-    {{#each deck}}
-      <a href="#/train/{{this}}">
-        <div class="deck">
+    <nav class="deckmenu">
+      {{#each deck}}
+        <a href="#/train/{{this}}" class="deck">
           <h2 class="deck__title">{{this}}</h2>
-        </div>
-      </a>
-    {{/each}}
+        </a>
+      {{/each}}
+    </nav>
   </script>
 
   <script id="trainTemplate" type="text/x-handlebars-template">

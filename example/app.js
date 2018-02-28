@@ -2,7 +2,7 @@
 
 (function () {
   
-  // TODO: Style decks
+  // TODO: Put deck length on each deck
   // TODO: new feature for flashcards - it should be possible to give a deck a long-form name under settings
   
   /* SETUP - SHARED VARIABLES */
