@@ -18,9 +18,9 @@
   
   <script id="headerTemplate" type="text/x-handlebars-template">
     {{#if backlink}}
-      <a href="#" class="header__backlink">Back</a>
+      <a href="#" class="header__link">&larr;</a>
     {{/if}}
-    <h1 class="header__title">{{title}}</h1>
+    <h1 class="header__title{{#unless backlink}} header__title--main{{/unless}}">{{title}}</h1>
   </script>
   
   <script id="selectTemplate" type="text/x-handlebars-template">

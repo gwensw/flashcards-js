@@ -2,7 +2,6 @@
 
 (function () {
   
-  // TODO: style headers nicely with all-caps, centered titles and nice backlink
   // TODO: Style decks
   // TODO: new feature for flashcards - it should be possible to give a deck a long-form name under settings
   
@@ -84,7 +83,7 @@
     };
     console.log(context.deck);
     document.querySelector(".main").innerHTML = selectTemplate(context);
-    changeHeader(false, "Flashcards.js");
+    changeHeader(false, "Flashcards.js demo");
     console.log('on select page');
   }
   
