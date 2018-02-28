@@ -5,34 +5,48 @@
 </head>
 <body>
   
-  <header class="header"></header>
+  <header class="header">
+    <a href="#">See All</a>
+  </header>
   
-  <div class="progress"></div>
+  <main class="main">
   
-  <div class="card">
-    <div class="card__stack card__stack--1"></div>
-    <div class="card__stack card__stack--2"></div>
-    <div id="maincard">
-      <div class="card__side card__side--question"></div>
-      <div class="card__side card__side--answer"></div>
-    </div>
-  </div>
-  
-  <div class="score js-hidden"></div>
-
-  <div class="answer">
-    <input type="text" class="answer__input">
-    <button id="checkAnswer" class="button answer__submit" type="button">Go ></button>
-    <button id="nextCard" class="button answer__next js-hidden" type="button">Next</button>
-  </div>
-
-  <button id="retry" class="button button--retry js-hidden">Retry Wrong Answers</button>
-  <button id="shuffle" class="button button--shuffle">Shuffle and Start Again</button>
-  
-  
+  </main>
   
   
   <!--- Handlebars Templates --->
+  
+  <script id="headerTemplate" type="text/x-handlebars-template">
+    {{#if backlink}}
+      <a href="#" class="header__backlink">Back</a>
+    {{/if}}
+    <h1 class="header__title">{{title}}</h1>
+  </script>
+  
+  <script id="selectTemplate" type="text/x-handlebars-template">
+      <a href="#/train/food">Open Food Deck</a>
+      <a href="#/edit/food">Edit Food Deck</a>
+  </script>
+
+  <script id="trainTemplate" type="text/x-handlebars-template">
+    <div class="progress"></div>
+    <div class="card">
+      <div class="card__stack card__stack--1"></div>
+      <div class="card__stack card__stack--2"></div>
+      <div id="maincard">
+        <div class="card__side card__side--question"></div>
+        <div class="card__side card__side--answer"></div>
+      </div>
+    </div>
+    <div class="score js-hidden"></div>
+    <div class="answer">
+      <input type="text" class="answer__input">
+      <button id="checkAnswer" class="button answer__submit" type="button">Go ></button>
+      <button id="nextCard" class="button answer__next js-hidden" type="button">Next</button>
+    </div>
+    <button id="retry" class="button button--retry js-hidden">Retry Wrong Answers</button>
+    <button id="shuffle" class="button button--shuffle">Shuffle and Start Again</button>
+  </script>
   
   <script id="questionTemplate" type="text/x-handlebars-template">
     <div class="card__difficulty card__difficulty--{{difficulty}}">
@@ -69,7 +83,8 @@
   
   <!--- /Handlebars Templates --->
 
-  <script src="../flashcards.js"></script>
-  <script src="handlebars.js"></script>
-  <script src="app.js"></script>
+  <script type="text/javascript" src="../flashcards.js"></script>
+  <script type="text/javascript" src="director.min.js"></script>
+  <script type="text/javascript" src="handlebars.js"></script>
+  <script type="text/javascript" src="app.js"></script>
 </body>

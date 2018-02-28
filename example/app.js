@@ -2,31 +2,94 @@
 
 (function () {
   
+  // generate an extra deck upon page load
+  // populate homepage with decks using 'listDecks' function + handlebars templating
+  // have each deck link to training mode
+  // new feature for flashcards - it should be possible to give a deck a long-form name under settings
+  
   /* SETUP - SHARED VARIABLES */
   
-  //get DOM elements
-  const cardStack = document.querySelector('.card'),
-        mainCard = document.querySelector('#maincard'),
-        cardQuestion = document.querySelector('.card__side--question'),
-        cardAnswer = document.querySelector('.card__side--answer'),
-        difficultyIndicator = document.querySelector('.card__difficulty'),
-        userAnswer = document.querySelector('.answer__input'),
-        shuffleButton = document.getElementById('shuffle'),
-        retryButton = document.getElementById('retry'),
-        submitButton = document.getElementById('checkAnswer'),
-        nextButton = document.getElementById('nextCard'),
-        progressBar = document.querySelector('.progress'),
-        score = document.querySelector('.score');
-  
   //get handlebars templates
-  const questionTemplate = Handlebars.compile(document.getElementById("questionTemplate").innerHTML),
-        answerTemplate = Handlebars.compile(document.getElementById("answerTemplate").innerHTML),
-        progressTemplate = Handlebars.compile(document.getElementById("progressTemplate").innerHTML),
-        scoreTemplate = Handlebars.compile(document.getElementById("scoreTemplate").innerHTML);
+  function getTemplate (name) {
+    return Handlebars.compile(document.getElementById(name).innerHTML);
+  }
+  const headerTemplate = getTemplate("headerTemplate"),
+        trainTemplate = getTemplate("trainTemplate"),
+        selectTemplate = getTemplate("selectTemplate"),
+        questionTemplate = getTemplate("questionTemplate"),
+        answerTemplate = getTemplate("answerTemplate"),
+        progressTemplate = getTemplate("progressTemplate"),
+        scoreTemplate = getTemplate("scoreTemplate");
   
   //variables for retrying wrong answers
   let cardsToRetry = 0,
       retryIndexes = [];
+  
+  /* SET UP ROUTING */
+  
+  //create a sample deck with some cards (if not already in localstorage)
+  flashcards.openDeck('food');
+  if (!flashcards.deckLength()) {
+    flashcards.addCards(['milk', 'llaeth'], ['bread', 'bara'], ['soup', 'cawl'], ['butter', 'menyn'], ['cheese', 'caws'], ['tasty', 'blasus'], ['healthy', 'iachus'], ['chocolate', 'siocled'], ['carrots', 'moron'], ['beans', 'ffa'], ['toast', 'tost'], ['tomatoes', 'tomatos'], ['salt', 'halen'], ['salty', 'hallt'], ['pepper', ['pubr', 'pubur']], ['coffee', 'coffi']);
+  }
+  //set up routing
+  const routes = {
+    '/train/:deckname': train,
+    '/edit/:deckname': edit,
+    '/': select,
+  };
+  
+  /* FUNCTIONS FOR ROUTING */
+  
+  function train(name) {
+    
+    // make necessary rendering changes to homepage
+    document.querySelector(".main").innerHTML = trainTemplate();
+    changeHeader(true, name);
+    
+    //open and render deck
+    flashcards.openDeck(name);
+    drawNextCard();
+    console.log("Opened", name);
+    
+    //bind event listeners
+    document.getElementById('shuffle').addEventListener('click', () => {
+      cardsToRetry = 0;
+      retryIndexes = [];
+      Render.reset();
+      flashcards.shuffle();
+      drawNextCard();
+    });
+
+    document.getElementById('checkAnswer').addEventListener('click', () => {
+      submitAnswer();
+    });
+
+    document.getElementById('nextCard').addEventListener('click', () => {
+      drawNextCard();
+    });
+
+    //start again with only wrong cards displayed
+    document.getElementById('retry').addEventListener('click', () => {
+      cardsToRetry = flashcards.getSessionInfo().incorrect;
+      retryIndexes = flashcards.getSessionInfo().incorrectCards;
+      Render.reset();
+      flashcards.openDeck('food');
+      drawNextCard();
+    });
+    
+  }
+  
+  function edit(name) {
+    console.log("Editing", name);
+    //TODO: interface for editing / creating new decks
+  }
+  
+  function select() {
+    console.log("Looking at", localStorage.length, localStorage.key(0));
+    document.querySelector(".main").innerHTML = selectTemplate();
+    changeHeader(false, "Flashcards.js");
+  }
   
   /* HELPER FUNCTIONS FOR EVENT LISTENERS */
   
@@ -36,13 +99,14 @@
       Render.score(flashcards.getSessionInfo());
     } else {
       Render.question(card.question[0], card.difficulty);
-      userAnswer.addEventListener('keydown', enterAnswer);
+      document.querySelector('.answer__input').addEventListener('keydown', enterAnswer);
       Render.progress(flashcards.getSessionInfo(), flashcards.deckLength());
     }
   }
   
   function submitAnswer () {
-    let result = flashcards.checkAnswer(userAnswer.value);
+    let userAnswer = document.querySelector('.answer__input'),
+        result = flashcards.checkAnswer(userAnswer.value);
     Render.answer(result.answers, result.newDifficulty, result.outcome);
     Render.progress(flashcards.getSessionInfo(), flashcards.deckLength());
     userAnswer.removeEventListener('keydown', enterAnswer);
@@ -54,44 +118,15 @@
       submitAnswer();
     }
   }
-        
-  /* BIND EVENT LISTENERS */
   
-  document.addEventListener('DOMContentLoaded', () => {
-    //create a sample deck with some cards (if not already in localstorage)
-    flashcards.openDeck('food');
-    if (!flashcards.deckLength()) {
-      flashcards.addCards(['milk', 'llaeth'], ['bread', 'bara'], ['soup', 'cawl'], ['butter', 'menyn'], ['cheese', 'caws'], ['tasty', 'blasus'], ['healthy', 'iachus'], ['chocolate', 'siocled'], ['carrots', 'moron'], ['beans', 'ffa'], ['toast', 'tost'], ['tomatoes', 'tomatos'], ['salt', 'halen'], ['salty', 'hallt'], ['pepper', ['pubr', 'pubur']], ['coffee', 'coffi']);
-    }
-    //draw then render the first card
-    drawNextCard();
-  });
-  
-  shuffleButton.addEventListener('click', () => {
-    cardsToRetry = 0;
-    retryIndexes = [];
-    Render.reset();
-    flashcards.shuffle();
-    drawNextCard();
-  });
-  
-  submitButton.addEventListener('click', () => {
-    submitAnswer();
-  });
-  
-  nextButton.addEventListener('click', () => {
-    drawNextCard();
-  });
-  
-  //start again with only wrong cards displayed
-  retryButton.addEventListener('click', () => {
-    cardsToRetry = flashcards.getSessionInfo().incorrect;
-    retryIndexes = flashcards.getSessionInfo().incorrectCards;
-    Render.reset();
-    flashcards.openDeck('food');
-    drawNextCard();
-  });
-  
+  function changeHeader (backlink, title) {
+    let context = {
+      backlink: backlink,
+      title: title
+    };
+    document.querySelector(".header").innerHTML = headerTemplate(context);
+  }
+
   /* FUNCTIONS FOR RENDERING */
   
   const Render = {
@@ -100,14 +135,15 @@
       let context = {
         question: qText,
         difficulty: diff
-      };
-      cardQuestion.innerHTML = questionTemplate(context);
-      mainCard.classList.remove('card--flip');
+      },
+          userAnswer = document.querySelector('.answer__input');
+      document.querySelector('.card__side--question').innerHTML = questionTemplate(context);
+      document.querySelector('#maincard').classList.remove('card--flip');
       userAnswer.value = '';
       userAnswer.readOnly = false;
       userAnswer.focus();
-      submitButton.classList.remove('js-hidden');
-      nextButton.classList.add('js-hidden');
+      document.getElementById('checkAnswer').classList.remove('js-hidden');
+      document.getElementById('nextCard').classList.add('js-hidden');
     },
     
     answer: function (answers, newDiff, outcome) {
@@ -115,18 +151,19 @@
         answers: answers,
         difficulty: newDiff,
         outcome: outcome
-      };
-      cardAnswer.innerHTML = answerTemplate(context);
+      },
+          nextButton = document.getElementById('nextCard');
+      document.querySelector('.card__side--answer').innerHTML = answerTemplate(context);
       
       //flip card
-      mainCard.classList.add('card--flip');
+      document.querySelector('#maincard').classList.add('card--flip');
       
       //turn button to 'next' button
-      submitButton.classList.add('js-hidden');
+      document.getElementById('checkAnswer').classList.add('js-hidden');
       nextButton.classList.remove('js-hidden');
       
       //freeze/disable input and focus on 'next' button
-      userAnswer.readOnly = true;
+      document.querySelector('.answer__input').readOnly = true;
       nextButton.focus();
     },
     
@@ -145,34 +182,38 @@
       for (i = 0; i < cardsRemaining; i++) {
         bars.push('incomplete');
       }
-      progressBar.innerHTML = progressTemplate( {bars: bars} );
+      document.querySelector('.progress').innerHTML = progressTemplate( {bars: bars} );
     },
     
     score: function (sessionInfo) {
       let context = {
         correct: sessionInfo.correct,
         total: sessionInfo.incorrect + sessionInfo.correct
-      };
-      score.innerHTML = scoreTemplate(context);
-      score.classList.remove('js-hidden');
-      cardStack.classList.add('js-hidden');
-      userAnswer.classList.add('js-hidden');
-      nextButton.classList.add('js-hidden');
+      },
+          retryButton = document.getElementById('retry'),
+          scoreIndicator = document.querySelector('.score');
+      scoreIndicator.innerHTML = scoreTemplate(context);
+      scoreIndicator.classList.remove('js-hidden');
+      document.querySelector('.card').classList.add('js-hidden');
+      document.querySelector('.answer__input').classList.add('js-hidden');
+      document.getElementById('nextCard').classList.add('js-hidden');
       if (sessionInfo.incorrect) {
         retryButton.classList.remove('js-hidden');
         retryButton.focus();
       } else {
-        shuffleButton.focus();
+        document.getElementById('shuffle').focus();
       }
     },
     
     reset: function () {
-      cardStack.classList.remove('js-hidden');
-      userAnswer.classList.remove('js-hidden');
-      retryButton.classList.add('js-hidden');
-      score.classList.add('js-hidden');
+      document.querySelector('.card').classList.remove('js-hidden');
+      document.querySelector('.answer__input').classList.remove('js-hidden');
+      document.getElementById('retry').classList.add('js-hidden');
+      document.querySelector('.score').classList.add('js-hidden');
     }
     
   };
+  
+  Router(routes).init();
 
 })();
