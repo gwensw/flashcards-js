@@ -48,6 +48,15 @@ body {
   border-right: 1px solid lightgrey;
 }
 
+.deck {
+  width: 230px;
+  height: 320px;
+}
+
+.deck__title {
+  
+}
+
 .card {
   perspective: 1000px;
   width: 230px;

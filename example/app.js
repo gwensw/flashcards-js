@@ -2,10 +2,7 @@
 
 (function () {
   
-  // generate an extra deck upon page load
-  // populate homepage with decks using 'listDecks' function + handlebars templating
-  // have each deck link to training mode
-  // new feature for flashcards - it should be possible to give a deck a long-form name under settings
+  // TODO: new feature for flashcards - it should be possible to give a deck a long-form name under settings
   
   /* SETUP - SHARED VARIABLES */
   
@@ -80,8 +77,13 @@
   }
   
   function select() {
-    document.querySelector(".main").innerHTML = selectTemplate();
+    let context = {
+      deck: flashcards.listDecks()
+    };
+    console.log(context.deck);
+    document.querySelector(".main").innerHTML = selectTemplate(context);
     changeHeader(false, "Flashcards.js");
+    console.log('on select page');
   }
   
   /* HELPER FUNCTIONS FOR EVENT LISTENERS */
@@ -207,6 +209,6 @@
     
   };
   
-  Router(routes).init();
+  Router(routes).init('/');
 
 })();
