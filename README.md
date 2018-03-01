@@ -1,5 +1,9 @@
 # Flashcards.js
 
+## Example
+
+See an example app built on this library at: https://benwig.github.io/flashcards-example/index.html
+
 ## Basic Methods
 
 ### flashcards.openDeck(_name_)
