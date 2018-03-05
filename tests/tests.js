@@ -476,6 +476,12 @@ tests({
   'it should return the short deck name if there is no display name set': function () {
     flashcards.openDeck('unnamed');
     eq(flashcards.getDisplayName(), 'unnamed');
+  },
+  
+  'it should return the short deck name if the display name has 0 characters': function () {
+    flashcards.openDeck('unnamed2');
+    flashcards.setDisplayName('');
+    eq(flashcards.getDisplayName(), 'unnamed2');
   }
   
   //it should be possible to download / view the full JSON for a deck
