@@ -446,6 +446,36 @@ tests({
     let x = flashcards.listDecks();
     assert(Array.isArray(x));
     eq(x.length, 0);
+  },
+  
+  //flashcards.setDisplayName(), flashcards.getDisplayName()
+  
+  'it should add a displayName attribute to the open deck': function () {
+    let newName = 'My Best Deck';
+    flashcards.openDeck('namedDeck');
+    flashcards.setDisplayName(newName);
+    eq(flashcards.exposeDeck().displayName, newName);
+  },
+  
+  'it should overwrite the existing displayName if there is one': function () {
+    let newName = 'My Best Deck';
+    let newerName = '100% Better Deck';
+    flashcards.openDeck('secondNamedDeck');
+    flashcards.setDisplayName(newName);
+    flashcards.setDisplayName(newerName);
+    eq(flashcards.exposeDeck().displayName, newerName);
+  },
+  
+  'it should return the currently-open deck display name as a a string': function () {
+    let expectedName = 'Words for Food'
+    flashcards.openDeck('thirdNamedDeck');
+    flashcards.setDisplayName(expectedName);
+    eq(flashcards.getDisplayName(), expectedName);
+  },
+  
+  'it should return the short deck name if there is no display name set': function () {
+    flashcards.openDeck('unnamed');
+    eq(flashcards.getDisplayName(), 'unnamed');
   }
   
   //it should be possible to download / view the full JSON for a deck
