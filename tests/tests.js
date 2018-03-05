@@ -356,7 +356,6 @@ tests({
     flashcards.openDeck('shuffledeck');
     flashcards.addCards(['first card', 'cerdyn cyntaf'], ['second card', 'ail gerdyn'], ['third card', 'trydydd cerdyn']);
     flashcards.shuffle();
-    console.log(flashcards.exposeDeck().cards);
     eq(flashcards.exposeDeck().cards.length, 3);
   },
   
