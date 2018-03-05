@@ -56,6 +56,7 @@
   
   function Deck (name) {
     this.name = name || 'temp';
+    this.displayName = name;
     this.cards = [];
   }
 
@@ -277,6 +278,18 @@
     }
     return names;
   };
+  
+  //give the deck a longform display name (optional)
+  lib.setDisplayName = function (str) {
+    str = str.toString();
+    __currentDeck.displayName = str;
+    saveDeck();
+  }
+  
+  //return the display name as a string (if display name is blank, return shortform name)
+  lib.getDisplayName = function () {
+    return __currentDeck.displayName.length ? __currentDeck.displayName : __currentDeck.name;
+  }
   
   //for testing
   lib.exposeDeck = function() {
