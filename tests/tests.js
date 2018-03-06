@@ -432,7 +432,6 @@ tests({
     flashcards.openDeck('mySecondDeck');
     let x = flashcards.listDecks();
     eq(x.length, 2);
-    eq(x[0], {});
   },
   
   'each object should contain a value for name and displayName': function () {
