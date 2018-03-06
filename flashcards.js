@@ -271,9 +271,12 @@
     let i;
     for (i = 0; i < len; i++) {
       //match and strip 'deck-' keys
-      let name = localStorage.key(i).match(/deck-(.*)/);
+      let name = localStorage.key(i).match(/deck-(.*)/),
+          obj = {};
       if (name) {
-        names.push(name[1]);
+        obj.name = name[1];
+        obj.displayName = JSON.parse(localStorage.getItem(name[0])).displayName;
+        names.push(obj);
       }
     }
     return names;
