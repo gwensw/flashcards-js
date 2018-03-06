@@ -426,13 +426,26 @@ tests({
   
   //flashcards.listDecks()
   
-  'it should return an array of deck names currently in localStorage': function () {
+  'it should return an array of objects representing decks currently in localStorage': function () {
     localStorage.clear();
     flashcards.openDeck('my-first-deck');
     flashcards.openDeck('mySecondDeck');
     let x = flashcards.listDecks();
     eq(x.length, 2);
-    eq(x[0], 'my-first-deck');
+    eq(x[0], {});
+  },
+  
+  'each object should contain a value for name and displayName': function () {
+    localStorage.clear();
+    flashcards.openDeck('my-first-deck');
+    flashcards.openDeck('mySecondDeck');
+    flashcards.setDisplayName('MY SECOND DECK!');
+    let x = flashcards.listDecks();
+    eq(x.length, 2);
+    eq(x[0].name, 'my-first-deck');
+    eq(x[0].displayName, 'my-first-deck');
+    eq(x[1].name, 'mySecondDeck');
+    eq(x[1].displayName, 'MY SECOND DECK!');
   },
   
   'it should exclude anything in localStorage which is not a deck': function () {
