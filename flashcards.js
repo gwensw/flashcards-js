@@ -150,7 +150,9 @@
   
   //delete a card at the given index in the current deck
   lib.deleteCard = function (index) {
-    __currentDeck.cards.splice(index, 1);
+    if (index !== undefined) {
+      __currentDeck.cards.splice(index, 1);
+    }
     saveDeck();
   };
   
