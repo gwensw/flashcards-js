@@ -28,7 +28,7 @@
     correct: 0,
     incorrect: 0,
     correctCards: [],
-    incorrectCards: []
+    incorrectCards: [],
   };
 
   /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
@@ -263,6 +263,7 @@
   
   //return info about current session
   lib.getSessionInfo = function () {
+    __sessionInfo.currentIndex = __currentIndex;
     return __sessionInfo;
   };
   
