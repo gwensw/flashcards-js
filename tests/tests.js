@@ -424,6 +424,14 @@ tests({
     eq(sessionInfo.correctCards[0], 1);
   },
   
+  'it should contain the index of the current card': function () {
+    flashcards.openDeck('sessiondeck2');
+    flashcards.addCards(['x', 'X']);
+    flashcards.drawNext();
+    let info = flashcards.getSessionInfo();
+    eq(info.currentIndex, 0);
+  },
+  
   //flashcards.listDecks()
   
   'it should return an array of objects representing decks currently in localStorage': function () {
