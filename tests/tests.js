@@ -350,6 +350,17 @@ tests({
     eq(outcome.answers[1], 'four');
   },
   
+  //flashcards.revealAnswer()
+  
+  'it should reveal the answer(s) to the current card, without affecting the score or card difficulty': function () {
+    flashcards.openDeck('revealer');
+    flashcards.addCard('My question', 'Answer to reveal', 5);
+    flashcards.drawNext();
+    let a = flashcards.revealAnswer();
+    eq(a[0], 'Answer to reveal');
+    eq(flashcards.exposeDeck().cards[0].difficulty, 5);
+  },
+  
   //flashcards.shuffle()
   
   'it should shuffle the current deck without removing/adding any cards': function () {
@@ -394,6 +405,7 @@ tests({
   },
   
   //flashcards.getSessionInfo()
+  
   'it should return an object containing no. of cards correct since deck opened': function () {
     flashcards.openDeck('sessiondeck');
     flashcards.addCards(['a', 'A'], ['b', 'B', 8], ['c', 'C'], ['d', 'D']);
@@ -503,10 +515,6 @@ tests({
     flashcards.setDisplayName('');
     eq(flashcards.getDisplayName(), 'unnamed2');
   }
-  
-  //it should be possible to download / view the full JSON for a deck
-  //it should be possible to load in the JSON for a deck to re-create that deck
-  //it should check whether the JSON creates valid cards
 	
 });
   
