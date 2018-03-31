@@ -235,6 +235,11 @@
     };
   };
   
+  //return the current card's answers as an array, without affecting difficulty/progress
+  lib.revealAnswer = function() {
+    return __currentDeck.cards[__currentIndex][settings.answerSide];
+  };
+  
   //randomly re-order the cards
   lib.shuffle = function () {
     //take __currentDeck cards, reorder them (Durstenfeld Shuffle)
