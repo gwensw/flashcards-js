@@ -352,12 +352,14 @@ tests({
   
   //flashcards.revealAnswer()
   
-  'it should reveal the answer(s) to the current card, without affecting the score or card difficulty': function () {
+  'it should reveal the answer(s) and difficulty to the current card, without affecting the score or difficulty': function () {
     flashcards.openDeck('revealer');
     flashcards.addCard('My question', 'Answer to reveal', 5);
     flashcards.drawNext();
-    let a = flashcards.revealAnswer();
+    let a = flashcards.revealAnswer().answers,
+        diff = flashcards.revealAnswer().difficulty;
     eq(a[0], 'Answer to reveal');
+    eq(diff, 5);
     eq(flashcards.exposeDeck().cards[0].difficulty, 5);
   },
   
