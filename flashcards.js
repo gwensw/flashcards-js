@@ -235,9 +235,12 @@
     };
   };
   
-  //return the current card's answers as an array, without affecting difficulty/progress
+  //return the current card's answers and difficulty as an array, without affecting difficulty/progress
   lib.revealAnswer = function() {
-    return __currentDeck.cards[__currentIndex][settings.answerSide];
+    return {
+      answers: __currentDeck.cards[__currentIndex][settings.answerSide],
+      difficulty: __currentDeck.cards[__currentIndex].difficulty
+    };
   };
   
   //randomly re-order the cards
