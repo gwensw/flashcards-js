@@ -275,6 +275,19 @@
     return __sessionInfo;
   };
   
+  //manipulate session info values
+  lib.setSessionInfo = function (newSessionInfo) {
+    if (!Number.isInteger(newSessionInfo.correct) || !Number.isInteger(newSessionInfo.incorrect) || !Array.isArray(newSessionInfo.correctCards) || !Array.isArray(newSessionInfo.incorrectCards) || !Number.isInteger(newSessionInfo.currentIndex)) {
+      throw new TypeError('Missing or illegal value for sessionInfo');
+    } else {
+      __sessionInfo.correct = newSessionInfo.correct;
+      __sessionInfo.incorrect = newSessionInfo.incorrect;
+      __sessionInfo.correctCards = newSessionInfo.correctCards;
+      __sessionInfo.incorrectCards = newSessionInfo.incorrectCards;
+      __currentIndex = newSessionInfo.currentIndex;
+    }
+  };
+  
   //return array of deck names in localStorage
   lib.listDecks = function () {
     const names = [],
