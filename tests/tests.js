@@ -446,6 +446,38 @@ tests({
     eq(info.currentIndex, 0);
   },
   
+  //flashcards.setSessionInfo()
+  
+  'it should set sessionInfo to match an argument object with values for each sessionInfo key': function () {
+    flashcards.openDeck('sessionTest');
+    flashcards.addCards(['1', 'one'], ['2', 'two'], ['3', 'three']);
+    let newSI = {
+      correct: 1,
+      incorrect: 1,
+      correctCards: [1],
+      incorrectCards: [0],
+      currentIndex: 2
+    };
+    flashcards.setSessionInfo(newSI);
+    let si = flashcards.getSessionInfo();
+    eq(si.correct, newSI.correct);
+    eq(si.incorrect, newSI.incorrect);
+    eq(si.correctCards[0], newSI.correctCards[0]);
+    eq(si.incorrectCards[0], newSI.incorrectCards[0]);
+    eq(si.currentIndex, newSI.currentIndex);
+  },
+  
+  'it should throw typeError if the argument object is missing a value for any sessionInfo key': function () {
+    fail();
+    let error;
+    try {
+      setSessionInfo({correct: 1, correctCards: [1]});
+    } catch(e) {
+      error = e;
+    }
+    assert(error instanceof TypeError);
+  },
+  
   //flashcards.listDecks()
   
   'it should return an array of objects representing decks currently in localStorage': function () {
