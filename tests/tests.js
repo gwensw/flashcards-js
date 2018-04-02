@@ -468,14 +468,20 @@ tests({
   },
   
   'it should throw typeError if the argument object is missing a value for any sessionInfo key': function () {
-    fail();
     let error;
     try {
-      setSessionInfo({correct: 1, correctCards: [1]});
+      flashcards.setSessionInfo({correct: 10, correctCards: [1]});
     } catch(e) {
       error = e;
     }
     assert(error instanceof TypeError);
+  },
+  
+  'it should not change sessionInfo if the argument object is missing any values': function () {
+    try {
+      flashcards.setSessionInfo({correct: 10, correctCards: [1]});
+    } catch (e) {}
+    eq(flashcards.getSessionInfo().correct === 10, false);
   },
   
   //flashcards.listDecks()
