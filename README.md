@@ -127,7 +127,7 @@ Looks like this:
   "currentIndex": 5 }
 ```
 
-### flashcards.setSessionInfo()
+### flashcards.setSessionInfo(_object_)
 Overwrite the session info with your own values. Useful if you want to restore a saved session, since by default, _flashcards.openDeck()_ starts a fresh session. 
 
 Requires an object with identical keys to what's returned with _getSessionInfo()_
@@ -147,4 +147,4 @@ Returns an integer representing the number of cards in the currently-open deck.
 Returns an array with an object representing each deck in localStorage, containing 'name' and 'displayName' values for each deck.
 
 ### flashcards.exposeDeck()
-Returns an object representing the current deck. Useful for finding the index of cards in the 'cards' object, as _flashcards.exposeDeck().cards_
+Returns an object representing the current deck. Useful if you're trying to find the index of a specific card in the 'cards' object, as _flashcards.exposeDeck().cards_
