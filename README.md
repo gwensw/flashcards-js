@@ -70,7 +70,7 @@ Returns an object representing the card with 'question' as array and 'difficulty
 
 Only returns cards whose difficulty are between the optional _min_ and _max_ integers. If only _min_ is given, return any cards from _min_ to 10.
 
-Returns _false_ if no cards are left in the deck (matching the criteria)
+Returns _false_ if no cards are left in the deck which match the criteria.
 
 ### flashcards.checkAnswer(_attempt_)
 Accepts an attempt (string) for the current card, and checks it against the card's possible correct answers. If incorrect, card's difficulty will increase +1 (up to a limit of 10). If correct, card's difficulty will decrease -1 (down to a limit of 0).
@@ -92,8 +92,12 @@ Randomly re-orders the cards in the current deck. drawNext() will now start from
 ### flashcards.flipDeck()
 Swaps which sides of the card are used for question and answer.
 
-### flashcards.exposeDeck()
-Returns an object representing the current deck. Useful for finding the index of cards in the 'cards' object, as _flashcards.exposeDeck().cards_
+### flashcards.draw(_index_)
+Draw the card with this specific index from the current deck.
+
+Like _drawNextCard()_, it returns an object representing the card, with 'question' as array and 'difficulty' as integer.
+
+Returns _false_ if there is no card at that index.
 
 ### flashcards.editCard(_index, attribute, newVal_)
 Replace a card's attribute with a new value.
@@ -109,3 +113,40 @@ Deletes the card at the given index in the current deck.
 
 ### flashcards.deleteDeck(_name_)
 Permanently deletes the named deck from local storage.
+
+## Methods for nosy people
+Expose various bits of data which you may find helpful when developing a front-end.
+
+### flashcards.getSessionInfo()
+Returns an object with information about what's happened since the deck was most recently opened.
+
+Looks like this:
+```javascript
+{ "correct": 3,
+  "incorrect": 2,
+  "correctCards": [0, 2, 3],
+  "incorrectCards": [1, 4],
+  "currentIndex": 5 }
+```
+
+### flashcards.setSessionInfo()
+Overwrite the session info with your own values. Useful if you want to restore a saved session, since by default, _flashcards.openDeck()_ starts a fresh session. 
+
+Requires an object with identical keys to what's returned with _getSessionInfo()_
+
+### flashcards.setDisplayName(_displayName_)
+Attaches a Display Name to the currently open deck. Unlike the deck name, Display Name doesn't have to be unique.
+
+By default, name and Display Name will be the same until setDisplayName is used.
+
+### flashcards.getDisplayName()
+Returns the currently open deck's Display Name (as string).
+
+### flashcards.getDeckLength()
+Returns an integer representing the number of cards in the currently-open deck.
+
+### flashcards.listDecks()
+Returns an array with an object representing each deck in localStorage, containing 'name' and 'displayName' values for each deck.
+
+### flashcards.exposeDeck()
+Returns an object representing the current deck. Useful for finding the index of cards in the 'cards' object, as _flashcards.exposeDeck().cards_
