@@ -46,7 +46,9 @@ flashcards.deleteDeck('testdeck');
 
 ```
 
-## Fundamental Methods
+---
+
+## Basic Methods
 
 ### flashcards.openDeck(_name_)
 Creates a new deck, or opens an existing deck of that name. Every action from now on will affect the open deck.
@@ -85,6 +87,8 @@ Returns an object with 'answers' (array) and 'difficulty' (integer).
 ### flashcards.shuffle()
 Randomly re-orders the cards in the current deck. drawNext() will now start from card index 0.
 
+---
+
 ## Further Methods
 
 ### flashcards.flipDeck()
@@ -111,6 +115,8 @@ Deletes the card at the given index in the current deck.
 
 ### flashcards.deleteDeck(_name_)
 Permanently deletes the named deck from local storage.
+
+---
 
 ## Methods for nosy people
 Expose various bits of data which you may find helpful when developing a front-end.
