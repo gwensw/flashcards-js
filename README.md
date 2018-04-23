@@ -1,12 +1,12 @@
 # Flashcards.js
 
-A mini JS library which provides the logic for browser-based flashcard apps [like this one](https://benwig.github.io/flashcards-example/index.html).
+A mini JS library which provides the logic for browser-based flashcard apps [like this one](https://gwensw.github.io/flashcards-example/index.html).
 
 Makes use of local storage to save and recall decks of flashcards which can be drilled and edited. Cards have an interchangeable question side and answer side, and a difficulty rating which changes to reflect how often you've got the answer right/wrong.
 
-Read the [tests](https://github.com/benwig/flashcards-js/blob/master/tests/tests.js).
+Read the [tests](https://github.com/gwensw/flashcards-js/blob/master/tests/tests.js).
 
-To use, include the _flashcards.js_ file in your project or link to the [Rawgit](https://cdn.rawgit.com/benwig/flashcards-js/master/flashcards.js). If you'd rather build off an existing UI, you can go grab a copy of the [example project](https://github.com/benwig/flashcards-example) instead.
+To use, include the _flashcards.js_ file in your project or link to the [Rawgit](https://cdn.rawgit.com/gwensw/flashcards-js/master/flashcards.js). If you'd rather build off an existing UI, you can go grab a copy of the [example project](https://github.com/gwensw/flashcards-example) instead.
 
 ## Basic Example
 
