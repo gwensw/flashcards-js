@@ -53,6 +53,17 @@
   function isValidDifficulty (n) {
     return n === undefined ? true : typeof n === 'number' && n <= 10 && n >= 0;
   }
+	
+	//returns the average difficulty of an array of cards
+	function averageDifficulty (cards) {
+		if (!cards.length) {
+			return null;
+		}
+		let sum = cards.reduce( (acc, val) => {
+			return {difficulty: parseInt(acc.difficulty) + parseInt(val.difficulty)};
+		}).difficulty;
+		return Math.round(sum / cards.length);
+	}
   
   function Deck (name) {
     this.name = name || 'temp';
@@ -288,7 +299,7 @@
     }
   };
   
-  //return array of deck names in localStorage
+  //return array of decks in localStorage (along with name, displayName, no. of cards, average difficulty)
   lib.listDecks = function () {
     const names = [],
           len = localStorage.length;
@@ -296,11 +307,15 @@
     for (i = 0; i < len; i++) {
       //match and strip 'deck-' keys
       let name = localStorage.key(i).match(/deck-(.*)/),
-          obj = {};
+          obj = {},
+					parsed;
       if (name) {
+				parsed = JSON.parse(localStorage.getItem(name[0]));
         obj.name = name[1];
-        obj.displayName = JSON.parse(localStorage.getItem(name[0])).displayName;
+        obj.displayName = parsed.displayName;
         names.push(obj);
+				obj.averageDifficulty = averageDifficulty(parsed.cards);
+				obj.cardLength = parsed.cards.length;
       }
     }
     return names;
