@@ -8,14 +8,16 @@
   const lib = {};
 
   /* --- SETTINGS (EXTERNAL) --- */
-
+	
   // Exposed settings configuration object. Aliased.
   const settings = lib.settings = {
     questionSide: 'side1', // side shown as prompt
     answerSide: 'side2', // hidden side listing correct answer(s)
     caseSensitive: false, // should answer be checked for precise caps?
     adjustDifficultyUp: 1,
-    adjustDifficultyDown: -1
+    adjustDifficultyDown: -1,
+		lowestDifficulty: 0, //lowest possible difficulty for cards
+		highestDifficulty: 10 //highest possible difficulty for cards
   };
   
   /* --- STORAGE (INTERNAL) --- */
@@ -32,6 +34,10 @@
   };
 
   /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
+	
+	function calculateDefault () {
+		return settings.defaultDifficulty ? settings.defaultDifficulty : Math.round((settings.highestDifficulty - settings.lowestDifficulty) / 2);
+	}
   
   //save the current deck to localStorage
   function saveDeck () {
@@ -51,7 +57,7 @@
   
   //return true if difficulty setting is a valid number / undefined
   function isValidDifficulty (n) {
-    return n === undefined ? true : typeof n === 'number' && n <= 10 && n >= 0;
+    return n === undefined ? true : typeof n === 'number' && n <= settings.highestDifficulty && n >= settings.lowestDifficulty;
   }
 	
 	//returns the average difficulty of an array of cards
@@ -74,7 +80,7 @@
   function Card (info) {
     this.side1 = Array.isArray(info.side1) ? info.side1 : [info.side1];
     this.side2 = Array.isArray(info.side2) ? info.side2 : [info.side2];
-    this.difficulty = (info.difficulty === undefined) ? 5 : info.difficulty;
+    this.difficulty = (info.difficulty === undefined) ? calculateDefault() : info.difficulty;
   }
 
   /* --- API METHODS --- */
@@ -185,8 +191,8 @@
   
   //draw the next card in the deck (if it falls within specified difficulty parameters)
   lib.drawNext = function (minDiff, maxDiff) {
-    let min = minDiff || 0,
-        max = maxDiff || 10,
+    let min = minDiff || settings.lowestDifficulty,
+        max = maxDiff || settings.highestDifficulty,
         card,
         i,
         len = __currentDeck.cards.length;
@@ -326,12 +332,12 @@
     str = str.toString();
     __currentDeck.displayName = str;
     saveDeck();
-  }
+  };
   
   //return the display name as a string (if display name is blank, return shortform name)
   lib.getDisplayName = function () {
     return __currentDeck.displayName.length ? __currentDeck.displayName : __currentDeck.name;
-  }
+  };
   
   //for testing
   lib.exposeDeck = function() {

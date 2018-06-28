@@ -1,3 +1,5 @@
+/*jshint esversion:6, devel: true, browser: true*/
+
 localStorage.clear(); //make sure there aren't leftover decks from last time tests ran
 
 tests({
@@ -539,7 +541,7 @@ tests({
   },
   
   'it should return the currently-open deck display name as a a string': function () {
-    let expectedName = 'Words for Food'
+    let expectedName = 'Words for Food';
     flashcards.openDeck('thirdNamedDeck');
     flashcards.setDisplayName(expectedName);
     eq(flashcards.getDisplayName(), expectedName);
