@@ -1,31 +1,30 @@
-/*jshint esversion:6, devel: true, browser: true*/
-
-(function(root) {
-
+(function (root) {
   /* --- SETUP --- */
 
   // Create local library object
   const lib = {};
 
   /* --- SETTINGS (EXTERNAL) --- */
-	
+
   // Exposed settings configuration object. Aliased.
-  const settings = lib.settings = {
+  const settings = {
     questionSide: 'side1', // side shown as prompt
     answerSide: 'side2', // hidden side listing correct answer(s)
     caseSensitive: false, // should answer be checked for precise caps?
     adjustDifficultyUp: 1,
     adjustDifficultyDown: -1,
-		lowestDifficulty: 0, //lowest possible difficulty for cards
-		highestDifficulty: 10 //highest possible difficulty for cards
+    lowestDifficulty: 0, // lowest possible difficulty for cards
+    highestDifficulty: 10 // highest possible difficulty for cards
   };
-  
+
+  lib.settings = settings;
+
   /* --- STORAGE (INTERNAL) --- */
-  
+
   let __currentDeck = false,
-      __name = false,
-      __currentIndex = -1;
-  
+    __name = false,
+    __currentIndex = -1;
+
   const __sessionInfo = {
     correct: 0,
     incorrect: 0,
@@ -34,58 +33,69 @@
   };
 
   /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
-	
-	function calculateDefault () {
-		return settings.defaultDifficulty ? settings.defaultDifficulty : Math.round((settings.highestDifficulty - settings.lowestDifficulty) / 2);
-	}
-  
-  //save the current deck to localStorage
-  function saveDeck () {
+
+  function calculateDefault() {
+    return settings.defaultDifficulty
+      ? settings.defaultDifficulty
+      : Math.round((settings.highestDifficulty - settings.lowestDifficulty) / 2);
+  }
+
+  // save the current deck to localStorage
+  function saveDeck() {
     if (__currentDeck) {
       localStorage.setItem(`deck-${__name}`, JSON.stringify(__currentDeck));
     }
   }
-  
-  //resets current session info and sets currentIndex to -1
-  function reset () {
+
+  // resets current session info and sets currentIndex to -1
+  function reset() {
     __currentIndex = -1;
     __sessionInfo.correct = 0;
     __sessionInfo.incorrect = 0;
     __sessionInfo.correctCards = [];
     __sessionInfo.incorrectCards = [];
   }
-  
-  //return true if difficulty setting is a valid number / undefined
-  function isValidDifficulty (n) {
-    return n === undefined ? true : typeof n === 'number' && n <= settings.highestDifficulty && n >= settings.lowestDifficulty;
+
+  // return true if difficulty setting is a valid number / undefined
+  function isValidDifficulty(n) {
+    return n === undefined
+      ? true
+      : typeof n === 'number' && n <= settings.highestDifficulty && n >= settings.lowestDifficulty;
   }
-	
-	//returns the average difficulty of an array of cards
-	function averageDifficulty (cards) {
-		if (!cards.length) {
-			return null;
-		}
-		let sum = cards.reduce( (acc, val) => {
-			return {difficulty: parseInt(acc.difficulty) + parseInt(val.difficulty)};
-		}).difficulty;
-		return Math.round(sum / cards.length);
-	}
-  
-  function Deck (name) {
+
+  // returns the average difficulty of an array of cards
+  function averageDifficulty(cards) {
+    if (!cards.length) {
+      return null;
+    }
+    const sum = cards.reduce((acc, val) => ({
+      difficulty: parseInt(acc.difficulty, 10) + parseInt(val.difficulty, 10)
+    }))
+      .difficulty;
+    return Math.round(sum / cards.length);
+  }
+
+  function Deck(name) {
     this.name = name || 'temp';
     this.displayName = name;
     this.cards = [];
   }
 
-  function Card (info) {
-    this.side1 = Array.isArray(info.side1) ? info.side1 : [info.side1];
-    this.side2 = Array.isArray(info.side2) ? info.side2 : [info.side2];
-    this.difficulty = (info.difficulty === undefined) ? calculateDefault() : info.difficulty;
+  function Card(info) {
+    this.side1 = Array.isArray(info.side1)
+      ? info.side1
+      : [info.side1];
+    this.side2 = Array.isArray(info.side2)
+      ? info.side2
+      : [info.side2];
+    this.difficulty = (info.difficulty === undefined)
+      ? calculateDefault()
+      : info.difficulty;
   }
 
   /* --- API METHODS --- */
 
-  //change the current deck
+  // change the current deck
   lib.openDeck = function (name) {
     if (!name) {
       throw new TypeError('Must specify a deck name to open');
@@ -97,8 +107,8 @@
     __name = name;
     reset();
   };
-  
-  //create a new card and add to the current deck
+
+  // create a new card and add to the current deck
   lib.addCard = function (side1, side2, difficulty) {
     if (arguments.length < 2 || arguments.length > 3) {
       throw new TypeError('Cards must have exactly 2 sides');
@@ -106,29 +116,30 @@
     if (!isValidDifficulty(difficulty)) {
       throw new TypeError('Difficulty must be a number between 0 and 1');
     }
-    let info = {
-      difficulty: difficulty,
-      side1: side1,
-      side2: side2
+    const info = {
+      difficulty,
+      side1,
+      side2
     };
     __currentDeck.cards.push(new Card(info));
     saveDeck();
   };
-  
-  //takes any number of arrays ([side1, side2, difficulty]) and creates one card per array on the current deck
-  lib.addCards = function () {
-    for (let i = 0; i < arguments.length; i++) {
-      if (Array.isArray(arguments[i]) && arguments[i].length >= 2) {
-        this.addCard(arguments[i][0], arguments[i][1], arguments[i][2]);
+
+  // creates one card per array on the current deck
+  // takes any number of arrays ([side1, side2, difficulty])
+  lib.addCards = function (...args) {
+    for (let i = 0; i < args.length; i += 1) {
+      if (Array.isArray(args[i]) && args[i].length >= 2) {
+        this.addCard(args[i][0], args[i][1], args[i][2]);
       } else {
-        __currentDeck.cards.splice(__currentDeck.cards.length - i, i+1);
+        __currentDeck.cards.splice(__currentDeck.cards.length - i, i + 1);
         throw new TypeError('Each card array must contain data for exactly 2 card sides');
       }
     }
     saveDeck();
   };
-  
-  //edit any attribute of a card
+
+  // edit any attribute of a card
   lib.editCard = function (index, attribute, newVal) {
     if (__currentDeck.cards[index] === undefined) {
       throw new TypeError('No card at that index');
@@ -153,8 +164,8 @@
     }
     saveDeck();
   };
-  
-  //adds new acceptable answers to one side of a card
+
+  // adds new acceptable answers to one side of a card
   lib.addToCard = function (index, side, newVal) {
     if (__currentDeck.cards[index][side] === undefined) {
       throw new TypeError('Must choose a valid card and side');
@@ -164,44 +175,46 @@
     __currentDeck.cards[index][side].push(newVal);
     saveDeck();
   };
-  
-  //delete a card at the given index in the current deck
+
+  // delete a card at the given index in the current deck
   lib.deleteCard = function (index) {
     if (index !== undefined) {
       __currentDeck.cards.splice(index, 1);
     }
     saveDeck();
   };
-  
-  //delete a deck from localstorage and set __currentDeck to false
+
+  // delete a deck from localstorage and set __currentDeck to false
   lib.deleteDeck = function (name) {
     localStorage.removeItem(`deck-${name}`);
     if (name === __name) {
       __currentDeck = false;
     }
   };
-  
-  //draw the card with the specified index
+
+  // draw the card with the specified index
   lib.draw = function (index) {
     __currentIndex = index;
-    return __currentDeck.cards[index] ? 
-          { question: __currentDeck.cards[index][settings.questionSide], difficulty: __currentDeck.cards[index].difficulty }
-          : false;
+    return __currentDeck.cards[index]
+      ? {
+        question: __currentDeck.cards[index][settings.questionSide],
+        difficulty: __currentDeck.cards[index].difficulty
+      }
+      : false;
   };
-  
-  //draw the next card in the deck (if it falls within specified difficulty parameters)
+
+  // draw the next card in the deck (if it falls within specified difficulty parameters)
   lib.drawNext = function (minDiff, maxDiff) {
-    let min = minDiff || settings.lowestDifficulty,
-        max = maxDiff || settings.highestDifficulty,
-        card,
-        i,
-        len = __currentDeck.cards.length;
+    const min = minDiff || settings.lowestDifficulty;
+    const max = maxDiff || settings.highestDifficulty;
+    const len = __currentDeck.cards.length;
+
     if (len === 0 || __currentIndex >= len - 1) {
       return false;
     }
-    for (i = 0; i < len; i++) {
+    for (let i = 0; i < len; i += 1) {
       __currentIndex += 1;
-      card = __currentDeck.cards[__currentIndex];
+      const card = __currentDeck.cards[__currentIndex];
       if (card.difficulty >= min && card.difficulty <= max) {
         return {
           question: card[settings.questionSide],
@@ -211,21 +224,18 @@
     }
     return false;
   };
-  
-  //check if attempt is correct & change card difficulty up/down
-  lib.checkAnswer = function(attempt) {
-    let i,
-        answer,
-        bool = false,
-        card = __currentDeck.cards[__currentIndex],
-        answers = card[settings.answerSide],
-        newDiff = card.difficulty;
-    
-    attempt = settings.caseSensitive ? attempt : attempt.toLowerCase();
-    
-    //check if attempt is correct
-    for (let i = 0; i < answers.length; i++) {
-      answer = settings.caseSensitive ? answers[i] : answers[i].toLowerCase();
+
+  // check if attempt is correct & change card difficulty up/down
+  lib.checkAnswer = function (attemptText) {
+    let bool = false;
+    const card = __currentDeck.cards[__currentIndex];
+    const answers = card[settings.answerSide];
+
+    const attempt = settings.caseSensitive ? attemptText : attemptText.toLowerCase();
+
+    // check if attempt is correct
+    for (let i = 0; i < answers.length; i += 1) {
+      const answer = settings.caseSensitive ? answers[i] : answers[i].toLowerCase();
       if (attempt === answer) {
         __sessionInfo.correct += 1;
         __sessionInfo.correctCards.push(__currentIndex);
@@ -233,68 +243,77 @@
         break;
       }
     }
-    
+
     if (!bool) {
       __sessionInfo.incorrect += 1;
       __sessionInfo.incorrectCards.push(__currentIndex);
     }
-    
-    //calculate card's new difficulty
-    newDiff += bool ? settings.adjustDifficultyDown : settings.adjustDifficultyUp;
-    card.difficulty = isValidDifficulty(newDiff) ? newDiff : card.difficulty;
-    
-    //save deck to localstorage and return outcome
+
+    // calculate card's new difficulty
+    let newDiff = card.difficulty;
+    newDiff += bool
+      ? settings.adjustDifficultyDown
+      : settings.adjustDifficultyUp;
+    card.difficulty = isValidDifficulty(newDiff)
+      ? newDiff
+      : card.difficulty;
+
+    // save deck to localstorage and return outcome
     saveDeck();
     return {
       outcome: bool,
       newDifficulty: card.difficulty,
-      answers: answers
+      answers
     };
   };
-  
-  //return the current card's answers and difficulty as an array, without affecting difficulty/progress
-  lib.revealAnswer = function() {
+
+  // return the current card's answers and difficulty as an array, without affecting difficulty/progress
+  lib.revealAnswer = function () {
     return {
       answers: __currentDeck.cards[__currentIndex][settings.answerSide],
       difficulty: __currentDeck.cards[__currentIndex].difficulty
     };
   };
-  
-  //randomly re-order the cards
+
+  // randomly re-order the cards
   lib.shuffle = function () {
-    //take __currentDeck cards, reorder them (Durstenfeld Shuffle)
-    const cards = __currentDeck.cards;
-    for (let i = cards.length - 1; i > 0; i--) {
-        let j = Math.floor(Math.random() * (i + 1));
-        [cards[i], cards[j]] = [cards[j], cards[i]];
+    // take __currentDeck cards, reorder them (Durstenfeld Shuffle)
+    const { cards } = __currentDeck;
+    for (let i = cards.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cards[i], cards[j]] = [cards[j], cards[i]];
     }
-    //reset __currentIndex and session info
+    // reset __currentIndex and session info
     reset();
-    //save the current deck
+    // save the current deck
     saveDeck();
   };
-  
-  //swap which card side is given as question, and which holds the answer
+
+  // swap which card side is given as question, and which holds the answer
   lib.flipDeck = function () {
-    let x = settings.questionSide;
+    const x = settings.questionSide;
     settings.questionSide = settings.answerSide;
     settings.answerSide = x;
   };
-  
-  //return number of cards in open deck
+
+  // return number of cards in open deck
   lib.deckLength = function () {
     return __currentDeck.cards.length;
   };
-  
-  //return info about current session
+
+  // return info about current session
   lib.getSessionInfo = function () {
     __sessionInfo.currentIndex = __currentIndex;
     return __sessionInfo;
   };
-  
-  //manipulate session info values
+
+  // manipulate session info values
   lib.setSessionInfo = function (newSessionInfo) {
-    if (!Number.isInteger(newSessionInfo.correct) || !Number.isInteger(newSessionInfo.incorrect) || !Array.isArray(newSessionInfo.correctCards) || !Array.isArray(newSessionInfo.incorrectCards) || !Number.isInteger(newSessionInfo.currentIndex)) {
+    if (!Number.isInteger(newSessionInfo.correct)
+      || !Number.isInteger(newSessionInfo.incorrect)
+      || !Array.isArray(newSessionInfo.correctCards)
+      || !Array.isArray(newSessionInfo.incorrectCards)
+      || !Number.isInteger(newSessionInfo.currentIndex)) {
       throw new TypeError('Missing or illegal value for sessionInfo');
     } else {
       __sessionInfo.correct = newSessionInfo.correct;
@@ -304,50 +323,45 @@
       __currentIndex = newSessionInfo.currentIndex;
     }
   };
-  
-  //return array of decks in localStorage (along with name, displayName, no. of cards, average difficulty)
+
+  // return array of decks in localStorage (along with name, displayName, no. of cards, average difficulty)
   lib.listDecks = function () {
-    const names = [],
-          len = localStorage.length;
-    let i;
-    for (i = 0; i < len; i++) {
-      //match and strip 'deck-' keys
-      let name = localStorage.key(i).match(/deck-(.*)/),
-          obj = {},
-					parsed;
+    const names = [];
+    const len = localStorage.length;
+    for (let i = 0; i < len; i += 1) {
+      // match and strip 'deck-' keys
+      const name = localStorage.key(i).match(/deck-(.*)/);
+      const obj = {};
       if (name) {
-				parsed = JSON.parse(localStorage.getItem(name[0]));
-        obj.name = name[1];
+        const parsed = JSON.parse(localStorage.getItem(name[0]));
+        [, obj.name] = name;
         obj.displayName = parsed.displayName;
         names.push(obj);
-				obj.averageDifficulty = averageDifficulty(parsed.cards);
-				obj.cardLength = parsed.cards.length;
+        obj.averageDifficulty = averageDifficulty(parsed.cards);
+        obj.cardLength = parsed.cards.length;
       }
     }
     return names;
   };
-  
-  //give the deck a longform display name (optional)
+
+  // give the deck a longform display name (optional)
   lib.setDisplayName = function (str) {
-    str = str.toString();
-    __currentDeck.displayName = str;
+    __currentDeck.displayName = str.toString();
     saveDeck();
   };
-  
-  //return the display name as a string (if display name is blank, return shortform name)
+
+  // return the display name as a string (if display name is blank, return shortform name)
   lib.getDisplayName = function () {
     return __currentDeck.displayName.length ? __currentDeck.displayName : __currentDeck.name;
   };
-  
-  //for testing
-  lib.exposeDeck = function() {
+
+  // for testing
+  lib.exposeDeck = function () {
     return __currentDeck;
   };
-
 
   /* --- DECLARE MODULE --- */
 
   // Declare 'flashcards' on the (global/window) object, i.e. 'this':
-  root.flashcards = lib;
-
+  root.flashcards = lib; // eslint-disable-line no-param-reassign
 }(this));

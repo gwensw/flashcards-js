@@ -1,0 +1,30 @@
+{
+  "name": "flashcardsjs",
+  "version": "1.0.0",
+  "description": "A mini JS library which provides the logic for browser-based flashcard apps [like this one](https://gwensw.github.io/flashcards-example/index.html).",
+  "main": "flashcards.js",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.10.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gwensw/flashcards-js.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gwensw/flashcards-js/issues"
+  },
+  "homepage": "https://github.com/gwensw/flashcards-js#readme"
+}
