@@ -364,4 +364,4 @@
 
   // Declare 'flashcards' on the (global/window) object, i.e. 'this':
   root.flashcards = lib; // eslint-disable-line no-param-reassign
-}(this));
+}(window || module || {}));

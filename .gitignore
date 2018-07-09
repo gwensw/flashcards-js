@@ -1,3 +1,4 @@
 .DS_Store
 .eslintrc*
 node_modules
+.babelrc*
