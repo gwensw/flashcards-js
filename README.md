@@ -6,7 +6,7 @@ Makes use of local storage to save and recall decks of flashcards which can be d
 
 Read the [tests](https://github.com/gwensw/flashcards-js/blob/master/tests/tests.js).
 
-To use, include the _flashcards.js_ file in your project or link to the [Rawgit](https://cdn.rawgit.com/gwensw/flashcards-js/master/flashcards.js). If you'd rather build off an existing UI, you can go grab a copy of the [example project](https://github.com/gwensw/flashcards-example) instead.
+To use, include the _flashcards.min.js_ file in your project or link to the [Rawgit](https://cdn.rawgit.com/gwensw/flashcards-js/51365838/flashcards.min.js). If you'd rather build off an existing UI, you can go grab a copy of the [example project](https://github.com/gwensw/flashcards-example) instead.
 
 ## Basic Example
 
