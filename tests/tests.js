@@ -1,3 +1,4 @@
+/* eslint-disable */
 /*jshint esversion:6, devel: true, browser: true*/
 
 localStorage.clear(); //make sure there aren't leftover decks from last time tests ran
@@ -24,6 +25,14 @@ tests({
       error = e;
     }
     assert(error instanceof TypeError);
+  },
+
+  'it should accept optional parameters for minDiff and maxDiff and set the session info accordingly': function() {
+    const minDiff = 2;
+    const maxDiff = 4;
+    flashcards.openDeck('fruit', minDiff, maxDiff);
+    eq(flashcards.getSessionInfo().minDiff, minDiff);
+    eq(flashcards.getSessionInfo().maxDiff, maxDiff);
   },
       
   //flashcards.addCard() - add cards to current deck
@@ -261,6 +270,20 @@ tests({
     let x = flashcards.drawNext(9);
     eq(x.question[0], 'white + black');
   },
+
+  'if min & max arguments are passed to openDeck, drawNext should return the first card whose difficulty falls between them': function () {
+    flashcards.openDeck('minmax2', 3, 9);
+    flashcards.addCards(['blue + yellow', 'green', 2], ['red + yellow', 'orange', 8]);
+    let x = flashcards.drawNext();
+    eq(x.question[0], 'red + yellow');
+  },
+  
+  'if no max difficulty is passed to openDeck, drawNext should return the next card with difficulty from min to 10': function () {
+    flashcards.openDeck('minmax2', 9);
+    flashcards.addCard('white + black', 'grey', 9);
+    let x = flashcards.drawNext();
+    eq(x.question[0], 'white + black');
+  },
   
   'if deck has no cards in the selected difficulty range, it should return false': function () {
     flashcards.openDeck('minmax');
@@ -458,7 +481,9 @@ tests({
       incorrect: 1,
       correctCards: [1],
       incorrectCards: [0],
-      currentIndex: 2
+      currentIndex: 2,
+      minDiff: 2,
+      maxDiff: 4
     };
     flashcards.setSessionInfo(newSI);
     let si = flashcards.getSessionInfo();
@@ -467,6 +492,8 @@ tests({
     eq(si.correctCards[0], newSI.correctCards[0]);
     eq(si.incorrectCards[0], newSI.incorrectCards[0]);
     eq(si.currentIndex, newSI.currentIndex);
+    eq(si.minDiff, newSI.minDiff);
+    eq(si.maxDiff, newSI.maxDiff);
   },
   
   'it should throw typeError if the argument object is missing a value for any sessionInfo key': function () {

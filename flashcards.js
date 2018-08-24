@@ -30,6 +30,8 @@
     incorrect: 0,
     correctCards: [],
     incorrectCards: [],
+    minDiff: false,
+    maxDiff: false
   };
 
   /* --- HELPER METHODS & CONSTRUCTORS (INTERNAL) --- */
@@ -54,12 +56,14 @@
     __sessionInfo.incorrect = 0;
     __sessionInfo.correctCards = [];
     __sessionInfo.incorrectCards = [];
+    __sessionInfo.minDiff = settings.lowestDifficulty;
+    __sessionInfo.maxDiff = settings.highestDifficulty;
   }
 
-  // return true if difficulty setting is a valid number / undefined
+  // return true if difficulty setting is a valid number
   function isValidDifficulty(n) {
     return n === undefined
-      ? true
+      ? false
       : typeof n === 'number' && n <= settings.highestDifficulty && n >= settings.lowestDifficulty;
   }
 
@@ -96,7 +100,7 @@
   /* --- API METHODS --- */
 
   // change the current deck
-  lib.openDeck = function (name) {
+  lib.openDeck = function (name, minDiff, maxDiff) {
     if (!name) {
       throw new TypeError('Must specify a deck name to open');
     }
@@ -106,6 +110,8 @@
     __currentDeck = JSON.parse(localStorage.getItem(`deck-${name}`));
     __name = name;
     reset();
+    __sessionInfo.minDiff = isValidDifficulty(minDiff) ? minDiff : settings.lowestDifficulty;
+    __sessionInfo.maxDiff = isValidDifficulty(maxDiff) ? maxDiff : settings.highestDifficulty;
   };
 
   // create a new card and add to the current deck
@@ -113,7 +119,7 @@
     if (arguments.length < 2 || arguments.length > 3) {
       throw new TypeError('Cards must have exactly 2 sides');
     }
-    if (!isValidDifficulty(difficulty)) {
+    if (difficulty && !isValidDifficulty(difficulty)) {
       throw new TypeError('Difficulty must be a number between 0 and 1');
     }
     const info = {
@@ -205,8 +211,8 @@
 
   // draw the next card in the deck (if it falls within specified difficulty parameters)
   lib.drawNext = function (minDiff, maxDiff) {
-    const min = minDiff || settings.lowestDifficulty;
-    const max = maxDiff || settings.highestDifficulty;
+    const min = isValidDifficulty(minDiff) ? minDiff : __sessionInfo.minDiff;
+    const max = isValidDifficulty(maxDiff) ? maxDiff : __sessionInfo.maxDiff;
     const len = __currentDeck.cards.length;
 
     if (len === 0 || __currentIndex >= len - 1) {
@@ -313,13 +319,17 @@
       || !Number.isInteger(newSessionInfo.incorrect)
       || !Array.isArray(newSessionInfo.correctCards)
       || !Array.isArray(newSessionInfo.incorrectCards)
-      || !Number.isInteger(newSessionInfo.currentIndex)) {
+      || !Number.isInteger(newSessionInfo.currentIndex)
+      || !isValidDifficulty(newSessionInfo.minDiff)
+      || !isValidDifficulty(newSessionInfo.maxDiff)) {
       throw new TypeError('Missing or illegal value for sessionInfo');
     } else {
       __sessionInfo.correct = newSessionInfo.correct;
       __sessionInfo.incorrect = newSessionInfo.incorrect;
       __sessionInfo.correctCards = newSessionInfo.correctCards;
       __sessionInfo.incorrectCards = newSessionInfo.incorrectCards;
+      __sessionInfo.minDiff = newSessionInfo.minDiff;
+      __sessionInfo.maxDiff = newSessionInfo.maxDiff;
       __currentIndex = newSessionInfo.currentIndex;
     }
   };
