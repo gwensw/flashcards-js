@@ -319,17 +319,19 @@
       || !Number.isInteger(newSessionInfo.incorrect)
       || !Array.isArray(newSessionInfo.correctCards)
       || !Array.isArray(newSessionInfo.incorrectCards)
-      || !Number.isInteger(newSessionInfo.currentIndex)
-      || !isValidDifficulty(newSessionInfo.minDiff)
-      || !isValidDifficulty(newSessionInfo.maxDiff)) {
+      || !Number.isInteger(newSessionInfo.currentIndex)) {
       throw new TypeError('Missing or illegal value for sessionInfo');
     } else {
       __sessionInfo.correct = newSessionInfo.correct;
       __sessionInfo.incorrect = newSessionInfo.incorrect;
       __sessionInfo.correctCards = newSessionInfo.correctCards;
       __sessionInfo.incorrectCards = newSessionInfo.incorrectCards;
-      __sessionInfo.minDiff = newSessionInfo.minDiff;
-      __sessionInfo.maxDiff = newSessionInfo.maxDiff;
+      __sessionInfo.minDiff = isValidDifficulty(newSessionInfo.minDiff)
+        ? newSessionInfo.minDiff
+        : __sessionInfo.minDiff;
+      __sessionInfo.maxDiff = isValidDifficulty(newSessionInfo.maxDiff)
+        ? newSessionInfo.maxDiff
+        : __sessionInfo.maxDiff;
       __currentIndex = newSessionInfo.currentIndex;
     }
   };
