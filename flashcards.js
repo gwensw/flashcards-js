@@ -221,6 +221,9 @@
     for (let i = 0; i < len; i += 1) {
       __currentIndex += 1;
       const card = __currentDeck.cards[__currentIndex];
+      if (!card) {
+        return false;
+      }
       if (card.difficulty >= min && card.difficulty <= max) {
         return {
           question: card[settings.questionSide],
