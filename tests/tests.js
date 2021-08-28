@@ -525,14 +525,23 @@ tests({
   
   'each object should contain a value for name and displayName': function () {
     localStorage.clear();
-    flashcards.openDeck('my-first-deck');
-    flashcards.openDeck('mySecondDeck');
+    flashcards.openDeck('a-my-first-deck');
+    flashcards.openDeck('b-my-second-deck');
     flashcards.setDisplayName('MY SECOND DECK!');
     let x = flashcards.listDecks();
+    // localStorage order is unreliable therefore listDecks() returns decks in unknown order
+    // In order to test, let us sort the returned decks A-Z by name
+    x.sort(function(a, b){
+      if (a.name > b.name) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
     eq(x.length, 2);
-    eq(x[0].name, 'my-first-deck');
-    eq(x[0].displayName, 'my-first-deck');
-    eq(x[1].name, 'mySecondDeck');
+    eq(x[0].name, 'a-my-first-deck');
+    eq(x[0].displayName, 'a-my-first-deck');
+    eq(x[1].name, 'b-my-second-deck');
     eq(x[1].displayName, 'MY SECOND DECK!');
   },
   
